@@ -8,6 +8,8 @@ import {
   IWeekPopulated,
   ITask,
   IDay,
+  IUser,
+  IUserPopulated,
 } from "../../helpers/typescript-helpers/interfaces";
 import Server from "../../server/server";
 import UserModel from "../../REST-entities/user/user.model";
@@ -19,10 +21,13 @@ describe("Task router test suite", () => {
   let app: Application;
   let createdTask: ITask | null;
   let createdWeek: IWeek | IWeekPopulated | null;
+  let createdUser: IUser | IUserPopulated | null;
+  let updatedUser: IUser | IUserPopulated | null;
   let accessToken: string;
   let secondAccessToken: string;
   let response: Response;
   let secondResponse: Response;
+  const startOfTheWeek = DateTime.local().startOf("week");
 
   beforeAll(async () => {
     app = new Server().startForTesting();
@@ -48,6 +53,7 @@ describe("Task router test suite", () => {
     accessToken = response.body.accessToken;
     secondAccessToken = secondResponse.body.accessToken;
     createdWeek = await WeekModel.findById(response.body.data.week._id);
+    createdUser = await UserModel.findOne({ _id: response.body.data.id });
   });
 
   afterAll(async () => {
@@ -129,40 +135,39 @@ describe("Task router test suite", () => {
         updatedWeek = await WeekModel.findOne({
           _id: (createdWeek as IWeek)._id,
         });
-        const startOfTheWeek = DateTime.local().startOf("week");
         days = [
           {
-            date: startOfTheWeek.plus({ days: 0 }).toLocaleString(),
+            date: startOfTheWeek.plus({ days: 0 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
           },
           {
-            date: startOfTheWeek.plus({ days: 1 }).toLocaleString(),
+            date: startOfTheWeek.plus({ days: 1 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
           },
           {
-            date: startOfTheWeek.plus({ days: 2 }).toLocaleString(),
+            date: startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
           },
           {
-            date: startOfTheWeek.plus({ days: 3 }).toLocaleString(),
+            date: startOfTheWeek.plus({ days: 3 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
           },
           {
-            date: startOfTheWeek.plus({ days: 4 }).toLocaleString(),
+            date: startOfTheWeek.plus({ days: 4 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
           },
           {
-            date: startOfTheWeek.plus({ days: 5 }).toLocaleString(),
+            date: startOfTheWeek.plus({ days: 5 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
           },
           {
-            date: startOfTheWeek.plus({ days: 6 }).toLocaleString(),
+            date: startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
           },
@@ -268,6 +273,438 @@ describe("Task router test suite", () => {
 
       it("Should return an unauthorized status", () => {
         expect(response.body.message).toBe("Unauthorized");
+      });
+    });
+  });
+
+  describe("PATCH /task/active/{taskId}", () => {
+    let response: Response;
+    let days: IDay[];
+    let updatedTask: ITask | null;
+
+    const validReqBody = {
+      dates: [
+        startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
+        startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
+      ],
+    };
+
+    const invalidReqBody = {
+      dates: [
+        startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
+        "qwerty123",
+      ],
+    };
+
+    const secondInvalidReqBody = {
+      dates: [
+        startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
+        startOfTheWeek.plus({ days: 7 }).toFormat("yyyy-MM-dd"),
+      ],
+    };
+
+    it("Init endpoint testing", () => {
+      expect(true).toBe(true);
+    });
+
+    context("Valid request", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/active/${(createdTask as ITask)._id}`)
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send(validReqBody);
+        updatedTask = await TaskModel.findOne({
+          _id: (createdTask as ITask)._id,
+        });
+        days = [
+          {
+            date: startOfTheWeek.plus({ days: 0 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 1 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
+            isActive: true,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 3 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 4 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 5 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
+            isActive: true,
+            isCompleted: false,
+          },
+        ];
+      });
+
+      it("Should return a 200 status code", () => {
+        expect(response.status).toBe(200);
+      });
+
+      it("Should return an expected result", () => {
+        expect(response.body).toEqual({
+          title: "Test",
+          reward: 1,
+          imageUrl: (createdTask as ITask).imageUrl,
+          days,
+          id: (createdTask as ITask)._id.toString(),
+        });
+      });
+
+      it("Should update task's days in DB", () => {
+        expect((updatedTask as ITask).days[2].isActive).toBeTruthy();
+        expect((updatedTask as ITask).days[6].isActive).toBeTruthy();
+      });
+    });
+
+    context("With invalidReqBody (one of dates is invalid)", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/active/${(createdTask as ITask)._id}`)
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send(invalidReqBody);
+      });
+
+      it("Should return a 400 status code", () => {
+        expect(response.status).toBe(400);
+      });
+
+      it("Should say that 'date' is invalid", () => {
+        expect(response.body.message).toBe(
+          "Invalid 'date'. Please, use YYYY-MM-DD string format"
+        );
+      });
+    });
+
+    context(
+      "With secondInvalidReqBody (one of dates doesn't exist on task)",
+      () => {
+        beforeAll(async () => {
+          response = await supertest(app)
+            .patch(`/task/active/${(createdTask as ITask)._id}`)
+            .set("Authorization", `Bearer ${accessToken}`)
+            .send(secondInvalidReqBody);
+        });
+
+        it("Should return a 404 status code", () => {
+          expect(response.status).toBe(404);
+        });
+
+        it("Should say that day wasn't found", () => {
+          expect(response.body.message).toBe("Day not found");
+        });
+      }
+    );
+
+    context("With invalid 'taskId'", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/active/qwerty123`)
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send(validReqBody);
+      });
+
+      it("Should return a 400 status code", () => {
+        expect(response.status).toBe(400);
+      });
+
+      it("Should say that 'taskId' is invalid", () => {
+        expect(response.body.message).toBe(
+          "Invalid 'taskId'. Must be a MongoDB ObjectId"
+        );
+      });
+    });
+
+    context("Without providing 'accessToken'", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/active/${(createdTask as ITask)._id}`)
+          .send(validReqBody);
+      });
+
+      it("Should return a 400 status code", () => {
+        expect(response.status).toBe(400);
+      });
+
+      it("Should say that token wasn't provided", () => {
+        expect(response.body.message).toBe("No token provided");
+      });
+    });
+
+    context("With invalid 'accessToken'", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/active/${(createdTask as ITask)._id}`)
+          .set("Authorization", `Bearer qwerty123`)
+          .send(validReqBody);
+      });
+
+      it("Should return a 401 status code", () => {
+        expect(response.status).toBe(401);
+      });
+
+      it("Should return an unauthorized status", () => {
+        expect(response.body.message).toBe("Unauthorized");
+      });
+    });
+
+    context("With another account", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/active/${(createdTask as ITask)._id}`)
+          .set("Authorization", `Bearer ${secondAccessToken}`)
+          .send(validReqBody);
+      });
+
+      it("Should return a 404 status code", () => {
+        expect(response.status).toBe(404);
+      });
+
+      it("Should say that task wasn't found", () => {
+        expect(response.body.message).toBe("Task not found");
+      });
+    });
+  });
+
+  describe("PATCH /task/complete/{taskId}", () => {
+    let response: Response;
+    let days: IDay[];
+    let updatedTask: ITask | null;
+
+    const validReqBody = {
+      date: startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
+    };
+
+    const invalidReqBody = {
+      date: startOfTheWeek.plus({ days: 3 }).toFormat("yyyy-MM-dd"),
+    };
+
+    const secondInvalidReqBody = {
+      date: "qwerty123",
+    };
+
+    it("Init endpoint testing", () => {
+      expect(true).toBe(true);
+    });
+
+    context("Valid request", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/complete/${(createdTask as ITask)._id}`)
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send(validReqBody);
+        updatedTask = await TaskModel.findOne({
+          _id: (createdTask as ITask)._id,
+        });
+        updatedUser = await UserModel.findOne({
+          _id: (createdUser as IUser)._id,
+        });
+        days = [
+          {
+            date: startOfTheWeek.plus({ days: 0 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 1 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
+            isActive: true,
+            isCompleted: true,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 3 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 4 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 5 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
+            isActive: true,
+            isCompleted: false,
+          },
+        ];
+      });
+
+      it("Should return a 200 status code", () => {
+        expect(response.status).toBe(200);
+      });
+
+      it("Should return an expected result", () => {
+        expect(response.body).toEqual({
+          newBalance: 1,
+          updatedTask: {
+            title: "Test",
+            reward: 1,
+            imageUrl: (createdTask as ITask).imageUrl,
+            days,
+            id: (createdTask as ITask)._id.toString(),
+          },
+        });
+      });
+
+      it("Should update task's day in DB", () => {
+        expect((updatedTask as ITask).days[2].isCompleted).toBeTruthy();
+      });
+
+      it("Should update user's balance in DB", () => {
+        expect((updatedUser as IUser).balance).toBe(1);
+      });
+    });
+
+    context("Invalid request (completing task on the same day)", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/complete/${(createdTask as ITask)._id}`)
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send(validReqBody);
+      });
+
+      it("Should return a 400 status code", () => {
+        expect(response.status).toBe(400);
+      });
+
+      it("Should say that this task has already been completed on this day", () => {
+        expect(response.body.message).toBe(
+          "This task is already completed on provided day"
+        );
+      });
+    });
+
+    context("With invalidReqBody (task is not active on provided day)", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/complete/${(createdTask as ITask)._id}`)
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send(invalidReqBody);
+      });
+
+      it("Should return a 400 status code", () => {
+        expect(response.status).toBe(400);
+      });
+
+      it("Should say that this task doesn't exist on provided day", () => {
+        expect(response.body.message).toBe(
+          "This task doesn't exist on provided day"
+        );
+      });
+    });
+
+    context("With secondInvalidReqBody ('date' is invalid)", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/complete/${(createdTask as ITask)._id}`)
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send(secondInvalidReqBody);
+      });
+
+      it("Should return a 400 status code", () => {
+        expect(response.status).toBe(400);
+      });
+
+      it("Should say that 'date' is invalid", () => {
+        expect(response.body.message).toBe(
+          "Invalid 'date'. Please, use YYYY-MM-DD string format"
+        );
+      });
+    });
+
+    context("With invalid 'taskId'", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/complete/qwerty123`)
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send(validReqBody);
+      });
+
+      it("Should return a 400 status code", () => {
+        expect(response.status).toBe(400);
+      });
+
+      it("Should say that 'taskId' is invalid", () => {
+        expect(response.body.message).toBe(
+          "Invalid 'taskId'. Must be a MongoDB ObjectId"
+        );
+      });
+    });
+
+    context("Without providing 'accessToken'", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/complete/${(createdTask as ITask)._id}`)
+          .send(validReqBody);
+      });
+
+      it("Should return a 400 status code", () => {
+        expect(response.status).toBe(400);
+      });
+
+      it("Should say that token wasn't provided", () => {
+        expect(response.body.message).toBe("No token provided");
+      });
+    });
+
+    context("With invalid 'accessToken'", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/complete/${(createdTask as ITask)._id}`)
+          .set("Authorization", `Bearer qwerty123`)
+          .send(validReqBody);
+      });
+
+      it("Should return a 401 status code", () => {
+        expect(response.status).toBe(401);
+      });
+
+      it("Should return an unauthorized status", () => {
+        expect(response.body.message).toBe("Unauthorized");
+      });
+    });
+
+    context("With another account", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/complete/${(createdTask as ITask)._id}`)
+          .set("Authorization", `Bearer ${secondAccessToken}`)
+          .send(validReqBody);
+      });
+
+      it("Should return a 404 status code", () => {
+        expect(response.status).toBe(404);
+      });
+
+      it("Should say that task wasn't found", () => {
+        expect(response.body.message).toBe("Task not found");
       });
     });
   });

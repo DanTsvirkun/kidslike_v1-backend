@@ -14,7 +14,7 @@ export interface IUserPopulated extends Document {
   passwordHash?: string;
   originUrl: string;
   balance: number;
-  currentWeek: IWeek;
+  currentWeek: IWeekPopulated;
 }
 
 export interface IWeek extends Document {

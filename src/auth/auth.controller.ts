@@ -35,7 +35,7 @@ export const register = async (req: Request, res: Response) => {
   let days: IDay[] = [];
   for (let i = 0; i < 7; i++) {
     const day = {
-      date: startOfTheWeek.plus({ days: i }).toLocaleString(),
+      date: startOfTheWeek.plus({ days: i }).toFormat("yyyy-MM-dd"),
       isActive: false,
       isCompleted: false,
     };
@@ -61,9 +61,9 @@ export const register = async (req: Request, res: Response) => {
     tasks.push(task._id);
   }
   const week = await WeekModel.create({
-    dates: `${startOfTheWeek.toLocaleString()}/${startOfTheWeek
+    dates: `${startOfTheWeek.toFormat("yyyy-MM-dd")}/${startOfTheWeek
       .plus({ days: 6 })
-      .toLocaleString()}`,
+      .toFormat("yyyy-MM-dd")}`,
     rewardsGained: 0,
     rewardsPlanned: 0,
     tasks,

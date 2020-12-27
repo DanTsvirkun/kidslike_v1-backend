@@ -154,37 +154,37 @@ describe("Auth router test suite", () => {
         startOfTheWeek = DateTime.local().startOf("week");
         days = [
           {
-            date: startOfTheWeek.plus({ days: 0 }).toLocaleString(),
+            date: startOfTheWeek.plus({ days: 0 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
           },
           {
-            date: startOfTheWeek.plus({ days: 1 }).toLocaleString(),
+            date: startOfTheWeek.plus({ days: 1 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
           },
           {
-            date: startOfTheWeek.plus({ days: 2 }).toLocaleString(),
+            date: startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
           },
           {
-            date: startOfTheWeek.plus({ days: 3 }).toLocaleString(),
+            date: startOfTheWeek.plus({ days: 3 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
           },
           {
-            date: startOfTheWeek.plus({ days: 4 }).toLocaleString(),
+            date: startOfTheWeek.plus({ days: 4 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
           },
           {
-            date: startOfTheWeek.plus({ days: 5 }).toLocaleString(),
+            date: startOfTheWeek.plus({ days: 5 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
           },
           {
-            date: startOfTheWeek.plus({ days: 6 }).toLocaleString(),
+            date: startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
           },
@@ -233,9 +233,9 @@ describe("Auth router test suite", () => {
             balance: 0,
             id: (user as IUser)._id.toString(),
             week: {
-              dates: `${startOfTheWeek.toLocaleString()}/${startOfTheWeek
-                .plus({ days: 6 })
-                .toLocaleString()}`,
+              dates: `${startOfTheWeek.toFormat(
+                "yyyy-MM-dd"
+              )}/${startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd")}`,
               rewardsGained: 0,
               rewardsPlanned: 0,
               __v: 0,

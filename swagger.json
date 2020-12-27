@@ -205,24 +205,35 @@
       }
     },
     "/task": {
-      "get": {
+      "post": {
         "tags": ["Task"],
-        "summary": "Get all children tasks for current user",
+        "summary": "Create a task",
         "security": [{ "Bearer": [] }],
         "parameters": [],
+        "requestBody": {
+          "description": "Task's object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Successful operation",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetTasksResponse"
+                  "$ref": "#/components/schemas/NewTask"
                 }
               }
             }
           },
           "400": {
-            "description": "No token provided",
+            "description": "Bad request (invalid request body) / No token provided",
             "content": {}
           },
           "401": {
@@ -231,6 +242,108 @@
           },
           "404": {
             "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/task/active/{taskId}": {
+      "patch": {
+        "tags": ["Task"],
+        "summary": "Add task to provided days",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "description": "Task's id (id field in task object)",
+            "type": "string"
+          }
+        ],
+        "requestBody": {
+          "description": "Dates object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActiveTaskRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveTaskResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body or id) / No token provided",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session / Task not found / Day not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/task/complete/{taskId}": {
+      "patch": {
+        "tags": ["Task"],
+        "summary": "Mark task as completed",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "description": "Task's id (id field in task object)",
+            "type": "string"
+          }
+        ],
+        "requestBody": {
+          "description": "Date object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompleteTaskRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompleteTaskResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body or id) / No token provided / Task is already completed on provided day / Task doesn't exist on provided day",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session / Task not found / Day not found",
             "content": {}
           }
         }
@@ -478,6 +591,320 @@
             "type": "string",
             "description": "New session's id",
             "example": "507f1f77bcf86cd799439011"
+          }
+        }
+      },
+      "TaskRequest": {
+        "type": "object",
+        "required": ["title", "reward"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Task's title",
+            "example": "Task 1"
+          },
+          "reward": {
+            "type": "integer",
+            "description": "Task's reward",
+            "minimum": 0,
+            "example": 1
+          }
+        }
+      },
+      "NewTask": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Task's title",
+            "example": "Task 1"
+          },
+          "reward": {
+            "type": "integer",
+            "description": "Task's reward",
+            "minimum": 0,
+            "example": 1
+          },
+          "imageUrl": {
+            "type": "string",
+            "description": "Task's image URL"
+          },
+          "id": {
+            "type": "string",
+            "description": "Task's id",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "days": {
+            "type": "array",
+            "description": "Task's days",
+            "items": {
+              "type": "object",
+              "description": "Day's task",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "Day's date",
+                  "example": "2020-12-28"
+                },
+                "isActive": {
+                  "type": "boolean",
+                  "description": "Task's active status"
+                },
+                "isCompleted": {
+                  "type": "boolean",
+                  "description": "Task's complete status"
+                }
+              }
+            },
+            "example": [
+              [
+                {
+                  "date": "2020-12-28",
+                  "isActive": true,
+                  "isCompleted": true
+                },
+                {
+                  "date": "2020-12-29",
+                  "isActive": true,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-30",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-31",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-1-1",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-1-2",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-1-3",
+                  "isActive": false,
+                  "isCompleted": false
+                }
+              ]
+            ]
+          }
+        }
+      },
+      "ActiveTaskRequest": {
+        "type": "object",
+        "required": "dates",
+        "properties": {
+          "dates": {
+            "type": "array",
+            "description": "Array of dates of the days, on which you want your task added",
+            "items": {
+              "type": "string",
+              "description": "Day's date",
+              "example": "2020-12-31"
+            }
+          }
+        }
+      },
+      "ActiveTaskResponse": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Task's title",
+            "example": "Task 1"
+          },
+          "reward": {
+            "type": "integer",
+            "description": "Task's reward",
+            "minimum": 0,
+            "example": 1
+          },
+          "imageUrl": {
+            "type": "string",
+            "description": "Task's image URL"
+          },
+          "id": {
+            "type": "string",
+            "description": "Task's id",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "days": {
+            "type": "array",
+            "description": "Task's days",
+            "items": {
+              "type": "object",
+              "description": "Day's task",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "Day's date",
+                  "example": "2020-12-28"
+                },
+                "isActive": {
+                  "type": "boolean",
+                  "description": "Task's active status"
+                },
+                "isCompleted": {
+                  "type": "boolean",
+                  "description": "Task's complete status"
+                }
+              }
+            },
+            "example": [
+              [
+                {
+                  "date": "2020-12-28",
+                  "isActive": true,
+                  "isCompleted": true
+                },
+                {
+                  "date": "2020-12-29",
+                  "isActive": true,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-30",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-31",
+                  "isActive": true,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-1-1",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-1-2",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-1-3",
+                  "isActive": false,
+                  "isCompleted": false
+                }
+              ]
+            ]
+          }
+        }
+      },
+      "CompleteTaskRequest": {
+        "type": "object",
+        "required": ["date"],
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Day's date",
+            "example": "2020-12-31"
+          }
+        }
+      },
+      "CompleteTaskResponse": {
+        "type": "object",
+        "properties": {
+          "newBalance": {
+            "type": "integer",
+            "description": "User's new balance",
+            "example": 1
+          },
+          "updatedTask": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Task's title",
+                "example": "Task 1"
+              },
+              "reward": {
+                "type": "integer",
+                "description": "Task's reward",
+                "minimum": 0,
+                "example": 1
+              },
+              "imageUrl": {
+                "type": "string",
+                "description": "Task's image URL"
+              },
+              "id": {
+                "type": "string",
+                "description": "Task's id",
+                "example": "507f1f77bcf86cd799439011"
+              },
+              "days": {
+                "type": "array",
+                "description": "Task's days",
+                "items": {
+                  "type": "object",
+                  "description": "Day's task",
+                  "properties": {
+                    "date": {
+                      "type": "string",
+                      "description": "Day's date",
+                      "example": "2020-12-28"
+                    },
+                    "isActive": {
+                      "type": "boolean",
+                      "description": "Task's active status"
+                    },
+                    "isCompleted": {
+                      "type": "boolean",
+                      "description": "Task's complete status"
+                    }
+                  }
+                },
+                "example": [
+                  [
+                    {
+                      "date": "2020-12-28",
+                      "isActive": true,
+                      "isCompleted": true
+                    },
+                    {
+                      "date": "2020-12-29",
+                      "isActive": true,
+                      "isCompleted": false
+                    },
+                    {
+                      "date": "2020-12-30",
+                      "isActive": false,
+                      "isCompleted": false
+                    },
+                    {
+                      "date": "2020-12-31",
+                      "isActive": true,
+                      "isCompleted": true
+                    },
+                    {
+                      "date": "2021-1-1",
+                      "isActive": false,
+                      "isCompleted": false
+                    },
+                    {
+                      "date": "2021-1-2",
+                      "isActive": false,
+                      "isCompleted": false
+                    },
+                    {
+                      "date": "2021-1-3",
+                      "isActive": false,
+                      "isCompleted": false
+                    }
+                  ]
+                ]
+              }
+            }
           }
         }
       }
