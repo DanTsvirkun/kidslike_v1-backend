@@ -12,8 +12,8 @@ import {
   IUserPopulated,
 } from "../../helpers/typescript-helpers/interfaces";
 import Server from "../../server/server";
-import UserModel from "../../REST-entities/user/user.model";
-import SessionModel from "../../REST-entities/session/session.model";
+import UserModel from "../user/user.model";
+import SessionModel from "../session/session.model";
 import WeekModel from "../week/week.model";
 import TaskModel from "./task.model";
 
