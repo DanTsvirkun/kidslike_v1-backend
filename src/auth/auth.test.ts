@@ -19,6 +19,7 @@ describe("Auth router test suite", () => {
   let app: Application;
   let createdSession: ISession | null;
   let accessToken: string;
+  let secondAccessToken: string;
   let refreshToken: string;
   let sid: string;
 
@@ -35,6 +36,7 @@ describe("Auth router test suite", () => {
 
   afterAll(async () => {
     await UserModel.deleteOne({ email: "test@email.com" });
+    await UserModel.deleteOne({ email: "testt@email.com" });
     await mongoose.connection.close();
   });
 
@@ -114,6 +116,82 @@ describe("Auth router test suite", () => {
     });
   });
 
+  describe("POST /auth/register-en", () => {
+    let response: Response;
+    let createdUser: IUser | IUserPopulated | null;
+
+    const validReqBody = {
+      email: "testt@email.com",
+      password: "qwerty123",
+    };
+
+    const invalidReqBody = {
+      email: "testt@email.com",
+    };
+
+    it("Init endpoint testing", () => {
+      expect(true).toBe(true);
+    });
+
+    context("With validReqBody", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .post("/auth/register-en")
+          .send(validReqBody);
+        createdUser = await UserModel.findById(response.body.id);
+      });
+
+      it("Should return a 201 status code", () => {
+        expect(response.status).toBe(201);
+      });
+
+      it("Should return an expected result", () => {
+        expect(response.body).toEqual({
+          email: validReqBody.email,
+          id: (createdUser as IUser)._id.toString(),
+        });
+      });
+
+      it("Should create a new user", () => {
+        expect(createdUser).toBeTruthy();
+      });
+    });
+
+    context("With same email", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .post("/auth/register-en")
+          .send(validReqBody);
+      });
+
+      it("Should return a 409 status code", () => {
+        expect(response.status).toBe(409);
+      });
+
+      it("Should say if email is already in use", () => {
+        expect(response.body.message).toBe(
+          `User with ${(createdUser as IUser).email} email already exists`
+        );
+      });
+    });
+
+    context("With invalidReqBody (no 'password' provided)", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .post("/auth/register-en")
+          .send(invalidReqBody);
+      });
+
+      it("Should return a 400 status code", () => {
+        expect(response.status).toBe(400);
+      });
+
+      it("Should say that 'username' is required", () => {
+        expect(response.body.message).toBe('"password" is required');
+      });
+    });
+  });
+
   describe("POST /auth/login", () => {
     let response: Response;
     let user: IUser | IUserPopulated | null;
@@ -122,6 +200,11 @@ describe("Auth router test suite", () => {
 
     const validReqBody = {
       email: "test@email.com",
+      password: "qwerty123",
+    };
+
+    const secondValidReqBody = {
+      email: "testt@email.com",
       password: "qwerty123",
     };
 
@@ -343,6 +426,181 @@ describe("Auth router test suite", () => {
 
       it("Should create a new session", () => {
         expect(createdSession).toBeTruthy();
+      });
+    });
+
+    context("With secondValidReqBody", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .post("/auth/login")
+          .send(secondValidReqBody);
+        secondAccessToken = response.body.accessToken;
+        startOfTheWeek = DateTime.local().startOf("week");
+        days = [
+          {
+            date: startOfTheWeek.plus({ days: 0 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 1 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 3 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 4 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 5 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+        ];
+      });
+
+      afterAll(async () => {
+        await WeekModel.deleteOne({ _id: response.body.data.week._id });
+        await TaskModel.deleteOne({
+          _id: response.body.data.week.tasks[0]._id,
+        });
+        await TaskModel.deleteOne({
+          _id: response.body.data.week.tasks[1]._id,
+        });
+        await TaskModel.deleteOne({
+          _id: response.body.data.week.tasks[2]._id,
+        });
+        await TaskModel.deleteOne({
+          _id: response.body.data.week.tasks[3]._id,
+        });
+        await TaskModel.deleteOne({
+          _id: response.body.data.week.tasks[4]._id,
+        });
+        await TaskModel.deleteOne({
+          _id: response.body.data.week.tasks[5]._id,
+        });
+        await TaskModel.deleteOne({
+          _id: response.body.data.week.tasks[6]._id,
+        });
+        await TaskModel.deleteOne({
+          _id: response.body.data.week.tasks[7]._id,
+        });
+      });
+
+      it("Should return a 200 status code", () => {
+        expect(response.status).toBe(200);
+      });
+
+      it("Should return an expected result", () => {
+        expect(response.body).toEqual({
+          accessToken: secondAccessToken,
+          refreshToken: response.body.refreshToken,
+          sid: response.body.sid,
+          data: {
+            email: secondValidReqBody.email,
+            balance: 0,
+            id: response.body.data.id.toString(),
+            week: {
+              dates: `${startOfTheWeek.toFormat(
+                "yyyy-MM-dd"
+              )}/${startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd")}`,
+              rewardsGained: 0,
+              rewardsPlanned: 0,
+              __v: 0,
+              _id: response.body.data.week._id,
+              tasks: [
+                {
+                  title: "Make the bed",
+                  reward: 3,
+                  imageUrl:
+                    "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025.png",
+                  days,
+                  __v: 0,
+                  _id: response.body.data.week.tasks[0]._id,
+                },
+                {
+                  title: "Vacuum-clean",
+                  reward: 5,
+                  imageUrl:
+                    "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(1).png",
+                  days,
+                  __v: 0,
+                  _id: response.body.data.week.tasks[1]._id,
+                },
+                {
+                  title: "To water flowers",
+                  reward: 2,
+                  imageUrl:
+                    "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(2).png",
+                  days,
+                  __v: 0,
+                  _id: response.body.data.week.tasks[2]._id,
+                },
+                {
+                  title: "Read a book",
+                  reward: 4,
+                  imageUrl:
+                    "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(3).png",
+                  days,
+                  __v: 0,
+                  _id: response.body.data.week.tasks[3]._id,
+                },
+                {
+                  title: "Throw out the trash",
+                  reward: 1,
+                  imageUrl:
+                    "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(4).png",
+                  days,
+                  __v: 0,
+                  _id: response.body.data.week.tasks[4]._id,
+                },
+                {
+                  title: "Brush your teeth",
+                  reward: 4,
+                  imageUrl:
+                    "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(5).png",
+                  days,
+                  __v: 0,
+                  _id: response.body.data.week.tasks[5]._id,
+                },
+                {
+                  title: "Sweep",
+                  reward: 4,
+                  imageUrl:
+                    "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(6).png",
+                  days,
+                  __v: 0,
+                  _id: response.body.data.week.tasks[6]._id,
+                },
+                {
+                  title: "Collect toys",
+                  reward: 2,
+                  imageUrl:
+                    "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(7).png",
+                  days,
+                  __v: 0,
+                  _id: response.body.data.week.tasks[7]._id,
+                },
+              ],
+            },
+          },
+        });
       });
     });
 
@@ -576,6 +834,18 @@ describe("Auth router test suite", () => {
         response = await supertest(app)
           .post("/auth/logout")
           .set("Authorization", `Bearer ${accessToken}`);
+      });
+
+      it("Should return a 204 status code", () => {
+        expect(response.status).toBe(204);
+      });
+    });
+
+    context("Valid request", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .post("/auth/logout")
+          .set("Authorization", `Bearer ${secondAccessToken}`);
       });
 
       it("Should return a 204 status code", () => {

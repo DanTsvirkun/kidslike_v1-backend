@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import tryCatchWrapper from "../helpers/function-helpers/try-catch-wrapper";
 import {
   register,
+  registerEn,
   login,
   googleAuth,
   googleRedirect,
@@ -35,6 +36,11 @@ const refreshTokensSchema = Joi.object({
 const router = Router();
 
 router.post("/register", validate(signUpInSchema), tryCatchWrapper(register));
+router.post(
+  "/register-en",
+  validate(signUpInSchema),
+  tryCatchWrapper(registerEn)
+);
 router.post("/login", validate(signUpInSchema), tryCatchWrapper(login));
 router.post("/logout", tryCatchWrapper(authorize), tryCatchWrapper(logout));
 router.post(

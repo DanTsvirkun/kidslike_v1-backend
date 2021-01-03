@@ -23,6 +23,7 @@ describe("Task router test suite", () => {
   let createdWeek: IWeek | IWeekPopulated | null;
   let createdUser: IUser | IUserPopulated | null;
   let updatedUser: IUser | IUserPopulated | null;
+  let updatedWeek: IWeek | IWeekPopulated | null;
   let accessToken: string;
   let secondAccessToken: string;
   let response: Response;
@@ -283,24 +284,15 @@ describe("Task router test suite", () => {
     let updatedTask: ITask | null;
 
     const validReqBody = {
-      dates: [
-        startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
-        startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
-      ],
+      days: [false, false, true, false, false, false, true, false],
     };
 
     const invalidReqBody = {
-      dates: [
-        startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
-        "qwerty123",
-      ],
+      dates: [false, false, true, false, false, false, true, "qwerty123"],
     };
 
     const secondInvalidReqBody = {
-      dates: [
-        startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
-        startOfTheWeek.plus({ days: 7 }).toFormat("yyyy-MM-dd"),
-      ],
+      dates: [false, false, true, false, false, false, true, false, false],
     };
 
     it("Init endpoint testing", () => {
@@ -315,6 +307,9 @@ describe("Task router test suite", () => {
           .send(validReqBody);
         updatedTask = await TaskModel.findOne({
           _id: (createdTask as ITask)._id,
+        });
+        updatedWeek = await WeekModel.findOne({
+          _id: (createdUser as IUser).currentWeek,
         });
         days = [
           {
@@ -361,11 +356,14 @@ describe("Task router test suite", () => {
 
       it("Should return an expected result", () => {
         expect(response.body).toEqual({
-          title: "Test",
-          reward: 1,
-          imageUrl: (createdTask as ITask).imageUrl,
-          days,
-          id: (createdTask as ITask)._id.toString(),
+          updatedWeekPlannedRewards: 2,
+          updatedTask: {
+            title: "Test",
+            reward: 1,
+            imageUrl: (createdTask as ITask).imageUrl,
+            days,
+            id: (createdTask as ITask)._id.toString(),
+          },
         });
       });
 
@@ -373,9 +371,13 @@ describe("Task router test suite", () => {
         expect((updatedTask as ITask).days[2].isActive).toBeTruthy();
         expect((updatedTask as ITask).days[6].isActive).toBeTruthy();
       });
+
+      it("Should update week's planned rewards in DB", () => {
+        expect((updatedWeek as IWeek).rewardsPlanned).toBe(2);
+      });
     });
 
-    context("With invalidReqBody (one of dates is invalid)", () => {
+    context("With invalidReqBody (one of days is invalid)", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .patch(`/task/active/${(createdTask as ITask)._id}`)
@@ -387,32 +389,27 @@ describe("Task router test suite", () => {
         expect(response.status).toBe(400);
       });
 
-      it("Should say that 'date' is invalid", () => {
-        expect(response.body.message).toBe(
-          "Invalid 'date'. Please, use YYYY-MM-DD string format"
-        );
+      it("Should return a validation error", () => {
+        expect(response.body.message).toBe('"days" is required');
       });
     });
 
-    context(
-      "With secondInvalidReqBody (one of dates doesn't exist on task)",
-      () => {
-        beforeAll(async () => {
-          response = await supertest(app)
-            .patch(`/task/active/${(createdTask as ITask)._id}`)
-            .set("Authorization", `Bearer ${accessToken}`)
-            .send(secondInvalidReqBody);
-        });
+    context("With secondInvalidReqBody (8 days provided)", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/active/${(createdTask as ITask)._id}`)
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send(secondInvalidReqBody);
+      });
 
-        it("Should return a 404 status code", () => {
-          expect(response.status).toBe(404);
-        });
+      it("Should return a 400 status code", () => {
+        expect(response.status).toBe(400);
+      });
 
-        it("Should say that day wasn't found", () => {
-          expect(response.body.message).toBe("Day not found");
-        });
-      }
-    );
+      it("Should return a validation error", () => {
+        expect(response.body.message).toBe('"days" is required');
+      });
+    });
 
     context("With invalid 'taskId'", () => {
       beforeAll(async () => {
@@ -517,6 +514,9 @@ describe("Task router test suite", () => {
         updatedUser = await UserModel.findOne({
           _id: (createdUser as IUser)._id,
         });
+        updatedWeek = await WeekModel.findOne({
+          _id: (createdUser as IUser).currentWeek,
+        });
         days = [
           {
             date: startOfTheWeek.plus({ days: 0 }).toFormat("yyyy-MM-dd"),
@@ -562,7 +562,8 @@ describe("Task router test suite", () => {
 
       it("Should return an expected result", () => {
         expect(response.body).toEqual({
-          newBalance: 1,
+          updatedBalance: 1,
+          updatedWeekGainedRewards: 1,
           updatedTask: {
             title: "Test",
             reward: 1,
@@ -579,6 +580,10 @@ describe("Task router test suite", () => {
 
       it("Should update user's balance in DB", () => {
         expect((updatedUser as IUser).balance).toBe(1);
+      });
+
+      it("Should update week's gained rewards in DB", () => {
+        expect((updatedWeek as IWeek).rewardsGained).toBe(1);
       });
     });
 

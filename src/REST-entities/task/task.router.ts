@@ -45,23 +45,8 @@ const taskDateSchema = Joi.object({
     .required(),
 });
 
-const taskArrayDateSchema = Joi.object({
-  dates: Joi.array()
-    .items(
-      Joi.string()
-        .custom((value, helpers) => {
-          const dateRegex = /^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/;
-          const isValidDate = dateRegex.test(value);
-          if (!isValidDate) {
-            return helpers.message({
-              custom: "Invalid 'date'. Please, use YYYY-MM-DD string format",
-            });
-          }
-          return value;
-        })
-        .required()
-    )
-    .required(),
+const taskActiveArraySchema = Joi.object({
+  days: Joi.array().min(8).max(8).items(Joi.boolean()).required(),
 });
 
 const router = Router();
@@ -77,7 +62,7 @@ router.patch(
   "/active/:taskId",
   tryCatchWrapper(authorize),
   validate(taskIdSchema, "params"),
-  validate(taskArrayDateSchema),
+  validate(taskActiveArraySchema),
   tryCatchWrapper(makeTaskActive)
 );
 router.patch(

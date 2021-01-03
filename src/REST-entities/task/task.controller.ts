@@ -13,7 +13,7 @@ import TaskModel from "./task.model";
 import UserModel from "../user/user.model";
 
 export const createTask = async (req: Request, res: Response) => {
-  const user = req.user;
+  const user = req.user as IUser;
   const { title, reward } = req.body;
   if (!req.file) {
     return res.status(400).send({ message: "Please, upload an image" });
@@ -32,7 +32,7 @@ export const createTask = async (req: Request, res: Response) => {
     };
     days.push(day);
   }
-  const userCurrentWeek = await WeekModel.findById(user?.currentWeek);
+  const userCurrentWeek = await WeekModel.findById(user.currentWeek);
   const task = await TaskModel.create({
     title,
     reward: Number(reward),
@@ -55,12 +55,12 @@ export const makeTaskActive = async (
   res: Response,
   next: NextFunction
 ) => {
-  const user = req.user;
+  const user = req.user as IUser;
   const { taskId } = req.params;
-  const { dates } = req.body;
+  const { days } = req.body;
   const task = await TaskModel.findById(taskId);
   return UserModel.findOne({
-    _id: user?._id,
+    _id: user._id,
   })
     .populate({
       path: "currentWeek",
@@ -73,6 +73,9 @@ export const makeTaskActive = async (
       ],
     })
     .exec(async (err, data) => {
+      const week = await WeekModel.findById(
+        (data as IUserPopulated).currentWeek._id
+      );
       if (err) {
         next(err);
       }
@@ -84,26 +87,26 @@ export const makeTaskActive = async (
       ) {
         return res.status(404).send({ message: "Task not found" });
       }
-      if (
-        !dates.every((date: string) =>
-          (task as ITask).days.find((day) => day.date === date)
-        )
-      ) {
-        return res.status(404).send({ message: "Day not found" });
+      for (let i = 0; i < 7; i++) {
+        if (!(task as ITask).days[i].isActive && days[i]) {
+          (week as IWeek).rewardsPlanned += task.reward;
+        }
+        if ((task as ITask).days[i].isActive && !days[i]) {
+          (week as IWeek).rewardsPlanned -= task.reward;
+        }
+        (task as ITask).days[i].isActive = days[i];
       }
-      dates.forEach((date: string) => {
-        const dayToUpdate = (task as ITask).days.find(
-          (day) => day.date === date
-        );
-        (dayToUpdate as IDay).isActive = true;
-      });
       await task.save();
+      await (week as IWeek).save();
       return res.status(200).send({
-        title: task.title,
-        reward: task.reward,
-        imageUrl: task.imageUrl,
-        id: task._id,
-        days: task.days,
+        updatedWeekPlannedRewards: week?.rewardsPlanned,
+        updatedTask: {
+          title: task.title,
+          reward: task.reward,
+          imageUrl: task.imageUrl,
+          id: task._id,
+          days: task.days,
+        },
       });
     });
 };
@@ -113,12 +116,12 @@ export const markTaskCompleted = async (
   res: Response,
   next: NextFunction
 ) => {
-  const user = req.user;
+  const user = req.user as IUser;
   const { taskId } = req.params;
   const { date } = req.body;
   const task = await TaskModel.findById(taskId);
   return UserModel.findOne({
-    _id: user?._id,
+    _id: user._id,
   })
     .populate({
       path: "currentWeek",
@@ -156,12 +159,18 @@ export const markTaskCompleted = async (
           .status(400)
           .send({ message: "This task doesn't exist on provided day" });
       }
+      const week = await WeekModel.findById(
+        (data as IUserPopulated).currentWeek._id
+      );
       dayToUpdate.isCompleted = true;
-      (user as IUser).balance += task.reward;
+      user.balance += task.reward;
+      (week as IWeek).rewardsGained += task.reward;
       await task.save();
-      await (user as IUser).save();
+      await user.save();
+      await (week as IWeek).save();
       return res.status(200).send({
-        newBalance: (user as IUser).balance,
+        updatedBalance: user?.balance,
+        updatedWeekGainedRewards: week?.rewardsGained,
         updatedTask: {
           title: task.title,
           reward: task.reward,

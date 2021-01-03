@@ -2,22 +2,18 @@ import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import * as queryString from "query-string";
-import { DateTime } from "luxon";
 import axios from "axios";
 import { URL } from "url";
 import {
   IUserPopulated,
-  IWeek,
-  IDay,
   ISession,
   IJWTPayload,
 } from "../helpers/typescript-helpers/interfaces";
-import { MongoDBObjectId } from "../helpers/typescript-helpers/types";
 import UserModel from "../REST-entities/user/user.model";
 import SessionModel from "../REST-entities/session/session.model";
 import WeekModel from "../REST-entities/week/week.model";
 import TaskModel from "../REST-entities/task/task.model";
-import defaultTasks from "../REST-entities/task/default-tasks";
+import { newWeek } from "../helpers/function-helpers/new-week";
 
 export const register = async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -31,43 +27,33 @@ export const register = async (req: Request, res: Response) => {
     password,
     Number(process.env.HASH_POWER)
   );
-  const startOfTheWeek = DateTime.local().startOf("week");
-  let days: IDay[] = [];
-  for (let i = 0; i < 7; i++) {
-    const day = {
-      date: startOfTheWeek.plus({ days: i }).toFormat("yyyy-MM-dd"),
-      isActive: false,
-      isCompleted: false,
-    };
-    days.push(day);
-  }
-  let tasks: MongoDBObjectId[] = [];
-  // defaultTasks.forEach(async (defaultTask) => {
-  //   const task = await TaskModel.create({
-  //     title: defaultTask.title,
-  //     reward: defaultTask.reward,
-  //     imageUrl: defaultTask.imageUrl,
-  //     days,
-  //   });
-  //   tasks.push(task._id);
-  // });
-  for (let i = 0; i < defaultTasks.length; i++) {
-    const task = await TaskModel.create({
-      title: defaultTasks[i].title,
-      reward: defaultTasks[i].reward,
-      imageUrl: defaultTasks[i].imageUrl,
-      days,
-    });
-    tasks.push(task._id);
-  }
-  const week = await WeekModel.create({
-    dates: `${startOfTheWeek.toFormat("yyyy-MM-dd")}/${startOfTheWeek
-      .plus({ days: 6 })
-      .toFormat("yyyy-MM-dd")}`,
-    rewardsGained: 0,
-    rewardsPlanned: 0,
-    tasks,
+  const week = await newWeek("ru");
+  const newUser = await UserModel.create({
+    email,
+    passwordHash,
+    originUrl: req.headers.origin as string,
+    balance: 0,
+    currentWeek: week._id,
   });
+  return res.status(201).send({
+    email,
+    id: newUser._id,
+  });
+};
+
+export const registerEn = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  const existingUser = await UserModel.findOne({ email });
+  if (existingUser) {
+    return res
+      .status(409)
+      .send({ message: `User with ${email} email already exists` });
+  }
+  const passwordHash = await bcrypt.hash(
+    password,
+    Number(process.env.HASH_POWER)
+  );
+  const week = await newWeek("en");
   const newUser = await UserModel.create({
     email,
     passwordHash,
