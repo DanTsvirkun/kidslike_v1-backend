@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import supertest, { Response } from "supertest";
 import { Application } from "express";
+import { DateTime } from "luxon";
 import {
   IWeek,
   ITask,
@@ -15,7 +16,7 @@ import TaskModel from "../task/task.model";
 describe("Week router test suite", () => {
   let app: Application;
   let createdWeek: IWeek | IWeekPopulated | null;
-  let accessToken: string;
+  let token: string;
   let response: Response;
 
   beforeAll(async () => {
@@ -33,51 +34,53 @@ describe("Week router test suite", () => {
     response = await supertest(app)
       .post("/auth/login")
       .send({ email: "test@email.com", password: "qwerty123" });
-    accessToken = response.body.accessToken;
-    createdWeek = await WeekModel.findById(response.body.data.week._id)
+    token = response.body.token;
+    createdWeek = await WeekModel.findById(response.body.week._id)
       .populate("tasks")
       .lean();
   });
 
   afterAll(async () => {
-    await UserModel.deleteOne({ _id: response.body.data.id });
-    await SessionModel.deleteOne({ _id: response.body.sid });
-    await WeekModel.deleteOne({ _id: response.body.data.week._id });
+    await UserModel.deleteOne({ _id: response.body.user.id });
+    await SessionModel.deleteMany({ uid: response.body.user.id });
+    await WeekModel.deleteOne({ _id: response.body.week._id });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[0]._id,
+      _id: response.body.week.tasks[0]._id,
     });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[1]._id,
+      _id: response.body.week.tasks[1]._id,
     });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[2]._id,
+      _id: response.body.week.tasks[2]._id,
     });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[3]._id,
+      _id: response.body.week.tasks[3]._id,
     });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[4]._id,
+      _id: response.body.week.tasks[4]._id,
     });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[5]._id,
+      _id: response.body.week.tasks[5]._id,
     });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[6]._id,
+      _id: response.body.week.tasks[6]._id,
     });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[7]._id,
+      _id: response.body.week.tasks[7]._id,
     });
     await mongoose.connection.close();
   });
 
   describe("GET /week", () => {
     let response: Response;
+    let startOfTheWeek: DateTime;
 
     context("Valid request", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .get("/week")
-          .set("Authorization", `Bearer ${accessToken}`);
+          .set("Authorization", `Bearer ${token}`);
+        startOfTheWeek = DateTime.local().startOf("week");
       });
 
       it("Should return a 200 status code", () => {
@@ -86,20 +89,27 @@ describe("Week router test suite", () => {
 
       it("Should return an expected result", () => {
         expect(response.body).toEqual({
-          dates: createdWeek?.dates,
-          rewardsGained: createdWeek?.rewardsGained,
-          rewardsPlanned: createdWeek?.rewardsPlanned,
-          _id: createdWeek?._id.toString(),
-          __v: 0,
-          tasks: (createdWeek as IWeekPopulated).tasks.map((task: ITask) => {
-            task._id = task._id.toString();
-            return task;
-          }),
+          message: "Week successfully loaded",
+          status: true,
+          week: {
+            startWeekDate: startOfTheWeek.toFormat("yyyy-MM-dd"),
+            endWeekDate: startOfTheWeek
+              .plus({ days: 6 })
+              .toFormat("yyyy-MM-dd"),
+            rewardsGained: 0,
+            rewardsPlanned: 0,
+            _id: createdWeek?._id.toString(),
+            __v: 0,
+            tasks: (createdWeek as IWeekPopulated).tasks.map((task: ITask) => {
+              task._id = task._id.toString();
+              return task;
+            }),
+          },
         });
       });
     });
 
-    context("Without providing 'accessToken'", () => {
+    context("Without providing 'token'", () => {
       beforeAll(async () => {
         response = await supertest(app).get("/week");
       });
@@ -113,7 +123,7 @@ describe("Week router test suite", () => {
       });
     });
 
-    context("With invalid 'accessToken'", () => {
+    context("With invalid 'token'", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .get("/week")

@@ -18,14 +18,16 @@ export interface IUserPopulated extends Document {
 }
 
 export interface IWeek extends Document {
-  dates: string;
+  startWeekDate: string;
+  endWeekDate: string;
   rewardsGained: number;
   rewardsPlanned: number;
   tasks: MongoDBObjectId[];
 }
 
 export interface IWeekPopulated extends Document {
-  dates: string;
+  startWeekDate: string;
+  endWeekDate: string;
   rewardsGained: number;
   rewardsPlanned: number;
   tasks: ITask[];

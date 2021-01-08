@@ -15,56 +15,124 @@ import WeekModel from "../REST-entities/week/week.model";
 import TaskModel from "../REST-entities/task/task.model";
 import { newWeek } from "../helpers/function-helpers/new-week";
 
-export const register = async (req: Request, res: Response) => {
+export const register = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { email, password } = req.body;
   const existingUser = await UserModel.findOne({ email });
   if (existingUser) {
     return res
       .status(409)
-      .send({ message: `User with ${email} email already exists` });
+      .send({ message: `User with this email already exists`, status: false });
   }
   const passwordHash = await bcrypt.hash(
     password,
     Number(process.env.HASH_POWER)
   );
   const week = await newWeek("ru");
-  const newUser = await UserModel.create({
+  const user = await UserModel.create({
     email,
     passwordHash,
     originUrl: req.headers.origin as string,
     balance: 0,
     currentWeek: week._id,
   });
-  return res.status(201).send({
-    email,
-    id: newUser._id,
+  const session = await SessionModel.create({
+    uid: user._id,
   });
+  const token = jwt.sign(
+    { uid: user._id, sid: session._id },
+    process.env.JWT_SECRET as string
+  );
+  return UserModel.findOne({ email })
+    .populate({
+      path: "currentWeek",
+      model: WeekModel,
+      populate: [
+        {
+          path: "tasks",
+          model: TaskModel,
+        },
+      ],
+    })
+    .exec((err, data) => {
+      if (err) {
+        next(err);
+      }
+      return res.status(201).send({
+        message: "Successfully registered",
+        status: true,
+        token,
+        user: {
+          email: (data as IUserPopulated).email,
+          balance: (data as IUserPopulated).balance,
+          id: (data as IUserPopulated)._id,
+        },
+        week: (data as IUserPopulated).currentWeek,
+      });
+    });
 };
 
-export const registerEn = async (req: Request, res: Response) => {
+export const registerEn = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { email, password } = req.body;
   const existingUser = await UserModel.findOne({ email });
   if (existingUser) {
     return res
       .status(409)
-      .send({ message: `User with ${email} email already exists` });
+      .send({ message: `User with this email already exists`, status: false });
   }
   const passwordHash = await bcrypt.hash(
     password,
     Number(process.env.HASH_POWER)
   );
   const week = await newWeek("en");
-  const newUser = await UserModel.create({
+  const user = await UserModel.create({
     email,
     passwordHash,
     originUrl: req.headers.origin as string,
     balance: 0,
     currentWeek: week._id,
   });
-  return res.status(201).send({
-    email,
-    id: newUser._id,
+  const session = await SessionModel.create({
+    uid: user._id,
   });
+  const token = jwt.sign(
+    { uid: user._id, sid: session._id },
+    process.env.JWT_SECRET as string
+  );
+  return UserModel.findOne({ email })
+    .populate({
+      path: "currentWeek",
+      model: WeekModel,
+      populate: [
+        {
+          path: "tasks",
+          model: TaskModel,
+        },
+      ],
+    })
+    .exec((err, data) => {
+      if (err) {
+        next(err);
+      }
+      return res.status(201).send({
+        message: "Successfully registered",
+        status: true,
+        token,
+        user: {
+          email: (data as IUserPopulated).email,
+          balance: (data as IUserPopulated).balance,
+          id: (data as IUserPopulated)._id,
+        },
+        week: (data as IUserPopulated).currentWeek,
+      });
+    });
 };
 
 export const login = async (
@@ -77,31 +145,23 @@ export const login = async (
   if (!user) {
     return res
       .status(403)
-      .send({ message: `User with ${email} email doesn't exist` });
+      .send({ message: `User with this email doesn't exist`, status: false });
   }
   if (!user.passwordHash) {
-    return res.status(403).send({ message: "Forbidden" });
+    return res.status(403).send({ message: "Forbidden", status: false });
   }
   const isPasswordCorrect = await bcrypt.compare(password, user.passwordHash);
   if (!isPasswordCorrect) {
-    return res.status(403).send({ message: "Password is wrong" });
+    return res
+      .status(403)
+      .send({ message: "Password is wrong", status: false });
   }
-  const newSession = await SessionModel.create({
+  const session = await SessionModel.create({
     uid: user._id,
   });
-  const accessToken = jwt.sign(
-    { uid: user._id, sid: newSession._id },
-    process.env.JWT_SECRET as string,
-    {
-      expiresIn: process.env.JWT_ACCESS_EXPIRE_TIME,
-    }
-  );
-  const refreshToken = jwt.sign(
-    { uid: user._id, sid: newSession._id },
-    process.env.JWT_SECRET as string,
-    {
-      expiresIn: process.env.JWT_REFRESH_EXPIRE_TIME,
-    }
+  const token = jwt.sign(
+    { uid: user._id, sid: session._id },
+    process.env.JWT_SECRET as string
   );
   return UserModel.findOne({ email })
     .populate({
@@ -119,15 +179,15 @@ export const login = async (
         next(err);
       }
       return res.status(200).send({
-        accessToken,
-        refreshToken,
-        sid: newSession._id,
-        data: {
+        message: "Successfully authenticated",
+        status: true,
+        token,
+        user: {
           email: (data as IUserPopulated).email,
           balance: (data as IUserPopulated).balance,
           id: (data as IUserPopulated)._id,
-          week: (data as IUserPopulated).currentWeek,
         },
+        week: (data as IUserPopulated).currentWeek,
       });
     });
 };
@@ -139,71 +199,30 @@ export const authorize = async (
 ) => {
   const authorizationHeader = req.get("Authorization");
   if (authorizationHeader) {
-    const accessToken = authorizationHeader.replace("Bearer ", "");
+    const token = authorizationHeader.replace("Bearer ", "");
     let payload: string | object;
     try {
-      payload = jwt.verify(accessToken, process.env.JWT_SECRET as string);
+      payload = jwt.verify(token, process.env.JWT_SECRET as string);
     } catch (err) {
-      return res.status(401).send({ message: "Unauthorized" });
+      return res.status(401).send({ message: "Unauthorized", status: false });
     }
     const user = await UserModel.findById((payload as IJWTPayload).uid);
     const session = await SessionModel.findById((payload as IJWTPayload).sid);
     if (!user) {
-      return res.status(404).send({ message: "Invalid user" });
+      return res.status(404).send({ message: "Invalid user", status: false });
     }
     if (!session) {
-      return res.status(404).send({ message: "Invalid session" });
+      return res
+        .status(404)
+        .send({ message: "Invalid session", status: false });
     }
     req.user = user;
     req.session = session;
     next();
-  } else return res.status(400).send({ message: "No token provided" });
-};
-
-export const refreshTokens = async (req: Request, res: Response) => {
-  const authorizationHeader = req.get("Authorization");
-  if (authorizationHeader) {
-    const activeSession = await SessionModel.findById(req.body.sid);
-    if (!activeSession) {
-      return res.status(404).send({ message: "Invalid session" });
-    }
-    const reqRefreshToken = authorizationHeader.replace("Bearer ", "");
-    let payload: string | object;
-    try {
-      payload = jwt.verify(reqRefreshToken, process.env.JWT_SECRET as string);
-    } catch (err) {
-      await SessionModel.findByIdAndDelete(req.body.sid);
-      return res.status(401).send({ message: "Unauthorized" });
-    }
-    const user = await UserModel.findById((payload as IJWTPayload).uid);
-    const session = await SessionModel.findById((payload as IJWTPayload).sid);
-    if (!user) {
-      return res.status(404).send({ message: "Invalid user" });
-    }
-    if (!session) {
-      return res.status(404).send({ message: "Invalid session" });
-    }
-    await SessionModel.findByIdAndDelete((payload as IJWTPayload).sid);
-    const newSession = await SessionModel.create({
-      uid: user._id,
-    });
-    const newAccessToken = jwt.sign(
-      { uid: user._id, sid: newSession._id },
-      process.env.JWT_SECRET as string,
-      {
-        expiresIn: process.env.JWT_ACCESS_EXPIRE_TIME,
-      }
-    );
-    const newRefreshToken = jwt.sign(
-      { uid: user._id, sid: newSession._id },
-      process.env.JWT_SECRET as string,
-      { expiresIn: process.env.JWT_REFRESH_EXPIRE_TIME }
-    );
+  } else
     return res
-      .status(200)
-      .send({ newAccessToken, newRefreshToken, newSid: newSession._id });
-  }
-  return res.status(400).send({ message: "No token provided" });
+      .status(400)
+      .send({ message: "No token provided", status: false });
 };
 
 export const logout = async (req: Request, res: Response) => {
@@ -259,26 +278,15 @@ export const googleRedirect = async (req: Request, res: Response) => {
     return res.status(403).send({
       message:
         "You should register from front-end first (not postman). Google is only for sign-in",
+      status: false,
     });
   }
-  const newSession = await SessionModel.create({
+  const session = await SessionModel.create({
     uid: existingUser._id,
   });
-  const accessToken = jwt.sign(
-    { uid: existingUser._id, sid: newSession._id },
-    process.env.JWT_SECRET as string,
-    {
-      expiresIn: process.env.JWT_ACCESS_EXPIRE_TIME,
-    }
+  const token = jwt.sign(
+    { uid: existingUser._id, sid: session._id },
+    process.env.JWT_SECRET as string
   );
-  const refreshToken = jwt.sign(
-    { uid: existingUser._id, sid: newSession._id },
-    process.env.JWT_SECRET as string,
-    {
-      expiresIn: process.env.JWT_REFRESH_EXPIRE_TIME,
-    }
-  );
-  return res.redirect(
-    `${existingUser.originUrl}?accessToken=${accessToken}&refreshToken=${refreshToken}&sid=${newSession._id}`
-  );
+  return res.redirect(`${existingUser.originUrl}?token=${token}`);
 };

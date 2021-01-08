@@ -5,7 +5,8 @@ import {
 } from "../../helpers/typescript-helpers/interfaces";
 
 const weekSchema = new Schema({
-  dates: String,
+  startWeekDate: String,
+  endWeekDate: String,
   rewardsGained: Number,
   rewardsPlanned: Number,
   tasks: [{ type: mongoose.Types.ObjectId, ref: "Task" }],

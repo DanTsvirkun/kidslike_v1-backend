@@ -24,8 +24,8 @@ describe("Task router test suite", () => {
   let createdUser: IUser | IUserPopulated | null;
   let updatedUser: IUser | IUserPopulated | null;
   let updatedWeek: IWeek | IWeekPopulated | null;
-  let accessToken: string;
-  let secondAccessToken: string;
+  let token: string;
+  let secondToken: string;
   let response: Response;
   let secondResponse: Response;
   const startOfTheWeek = DateTime.local().startOf("week");
@@ -51,66 +51,67 @@ describe("Task router test suite", () => {
     secondResponse = await supertest(app)
       .post("/auth/login")
       .send({ email: "testt@email.com", password: "qwerty123" });
-    accessToken = response.body.accessToken;
-    secondAccessToken = secondResponse.body.accessToken;
-    createdWeek = await WeekModel.findById(response.body.data.week._id);
-    createdUser = await UserModel.findOne({ _id: response.body.data.id });
+    token = response.body.token;
+    secondToken = secondResponse.body.token;
+    createdWeek = await WeekModel.findById(response.body.week._id);
+    createdUser = await UserModel.findOne({ _id: response.body.user.id });
   });
 
   afterAll(async () => {
-    await UserModel.deleteOne({ _id: response.body.data.id });
-    await UserModel.deleteOne({ _id: secondResponse.body.data.id });
-    await SessionModel.deleteOne({ _id: response.body.sid });
-    await SessionModel.deleteOne({ _id: secondResponse.body.sid });
-    await WeekModel.deleteOne({ _id: response.body.data.week._id });
-    await WeekModel.deleteOne({ _id: secondResponse.body.data.week._id });
+    await UserModel.deleteOne({ _id: response.body.user.id });
+    await UserModel.deleteOne({ _id: secondResponse.body.user.id });
+    await SessionModel.deleteMany({ uid: response.body.user.id });
+    await SessionModel.deleteMany({ uid: secondResponse.body.user.id });
+    await WeekModel.deleteOne({ _id: response.body.week._id });
+    await WeekModel.deleteOne({ _id: secondResponse.body.week._id });
+    await TaskModel.deleteOne({ title: "Test" });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[0]._id,
+      _id: response.body.week.tasks[0]._id,
     });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[1]._id,
+      _id: response.body.week.tasks[1]._id,
     });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[2]._id,
+      _id: response.body.week.tasks[2]._id,
     });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[3]._id,
+      _id: response.body.week.tasks[3]._id,
     });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[4]._id,
+      _id: response.body.week.tasks[4]._id,
     });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[5]._id,
+      _id: response.body.week.tasks[5]._id,
     });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[6]._id,
+      _id: response.body.week.tasks[6]._id,
     });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[7]._id,
+      _id: response.body.week.tasks[7]._id,
     });
     await TaskModel.deleteOne({
-      _id: secondResponse.body.data.week.tasks[0]._id,
+      _id: secondResponse.body.week.tasks[0]._id,
     });
     await TaskModel.deleteOne({
-      _id: secondResponse.body.data.week.tasks[1]._id,
+      _id: secondResponse.body.week.tasks[1]._id,
     });
     await TaskModel.deleteOne({
-      _id: secondResponse.body.data.week.tasks[2]._id,
+      _id: secondResponse.body.week.tasks[2]._id,
     });
     await TaskModel.deleteOne({
-      _id: secondResponse.body.data.week.tasks[3]._id,
+      _id: secondResponse.body.week.tasks[3]._id,
     });
     await TaskModel.deleteOne({
-      _id: secondResponse.body.data.week.tasks[4]._id,
+      _id: secondResponse.body.week.tasks[4]._id,
     });
     await TaskModel.deleteOne({
-      _id: secondResponse.body.data.week.tasks[5]._id,
+      _id: secondResponse.body.week.tasks[5]._id,
     });
     await TaskModel.deleteOne({
-      _id: secondResponse.body.data.week.tasks[6]._id,
+      _id: secondResponse.body.week.tasks[6]._id,
     });
     await TaskModel.deleteOne({
-      _id: secondResponse.body.data.week.tasks[7]._id,
+      _id: secondResponse.body.week.tasks[7]._id,
     });
     await mongoose.connection.close();
   });
@@ -128,7 +129,7 @@ describe("Task router test suite", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .post("/task")
-          .set("Authorization", `Bearer ${accessToken}`)
+          .set("Authorization", `Bearer ${token}`)
           .field("title", "Test")
           .field("reward", 1)
           .attach("file", path.join(__dirname, "./test-files/test.jpg"));
@@ -181,6 +182,8 @@ describe("Task router test suite", () => {
 
       it("Should return an expected result", () => {
         expect(response.body).toEqual({
+          message: "Task successfully created",
+          status: true,
           title: "Test",
           reward: 1,
           imageUrl: (createdTask as ITask).imageUrl,
@@ -208,7 +211,7 @@ describe("Task router test suite", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .post("/task")
-          .set("Authorization", `Bearer ${accessToken}`)
+          .set("Authorization", `Bearer ${token}`)
           .field("title", "Test")
           .field("reward", 0);
       });
@@ -228,7 +231,7 @@ describe("Task router test suite", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .post("/task")
-          .set("Authorization", `Bearer ${accessToken}`)
+          .set("Authorization", `Bearer ${token}`)
           .field("title", "Test")
           .field("reward", 1);
       });
@@ -242,7 +245,7 @@ describe("Task router test suite", () => {
       });
     });
 
-    context("Invalid request (without providing 'accessToken')", () => {
+    context("Invalid request (without providing 'token')", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .post("/task")
@@ -259,7 +262,7 @@ describe("Task router test suite", () => {
       });
     });
 
-    context("Invalid request (with invalid 'accessToken')", () => {
+    context("Invalid request (with invalid 'token')", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .post("/task")
@@ -303,7 +306,7 @@ describe("Task router test suite", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .patch(`/task/active/${(createdTask as ITask)._id}`)
-          .set("Authorization", `Bearer ${accessToken}`)
+          .set("Authorization", `Bearer ${token}`)
           .send(validReqBody);
         updatedTask = await TaskModel.findOne({
           _id: (createdTask as ITask)._id,
@@ -356,6 +359,8 @@ describe("Task router test suite", () => {
 
       it("Should return an expected result", () => {
         expect(response.body).toEqual({
+          message: "Task successfully became active",
+          status: true,
           updatedWeekPlannedRewards: 2,
           updatedTask: {
             title: "Test",
@@ -381,7 +386,7 @@ describe("Task router test suite", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .patch(`/task/active/${(createdTask as ITask)._id}`)
-          .set("Authorization", `Bearer ${accessToken}`)
+          .set("Authorization", `Bearer ${token}`)
           .send(invalidReqBody);
       });
 
@@ -398,7 +403,7 @@ describe("Task router test suite", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .patch(`/task/active/${(createdTask as ITask)._id}`)
-          .set("Authorization", `Bearer ${accessToken}`)
+          .set("Authorization", `Bearer ${token}`)
           .send(secondInvalidReqBody);
       });
 
@@ -415,7 +420,7 @@ describe("Task router test suite", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .patch(`/task/active/qwerty123`)
-          .set("Authorization", `Bearer ${accessToken}`)
+          .set("Authorization", `Bearer ${token}`)
           .send(validReqBody);
       });
 
@@ -430,7 +435,7 @@ describe("Task router test suite", () => {
       });
     });
 
-    context("Without providing 'accessToken'", () => {
+    context("Without providing 'token'", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .patch(`/task/active/${(createdTask as ITask)._id}`)
@@ -446,7 +451,7 @@ describe("Task router test suite", () => {
       });
     });
 
-    context("With invalid 'accessToken'", () => {
+    context("With invalid 'token'", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .patch(`/task/active/${(createdTask as ITask)._id}`)
@@ -467,7 +472,7 @@ describe("Task router test suite", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .patch(`/task/active/${(createdTask as ITask)._id}`)
-          .set("Authorization", `Bearer ${secondAccessToken}`)
+          .set("Authorization", `Bearer ${secondToken}`)
           .send(validReqBody);
       });
 
@@ -506,7 +511,7 @@ describe("Task router test suite", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .patch(`/task/complete/${(createdTask as ITask)._id}`)
-          .set("Authorization", `Bearer ${accessToken}`)
+          .set("Authorization", `Bearer ${token}`)
           .send(validReqBody);
         updatedTask = await TaskModel.findOne({
           _id: (createdTask as ITask)._id,
@@ -562,6 +567,8 @@ describe("Task router test suite", () => {
 
       it("Should return an expected result", () => {
         expect(response.body).toEqual({
+          message: "Task has been successfully completed",
+          status: true,
           updatedBalance: 1,
           updatedWeekGainedRewards: 1,
           updatedTask: {
@@ -591,7 +598,7 @@ describe("Task router test suite", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .patch(`/task/complete/${(createdTask as ITask)._id}`)
-          .set("Authorization", `Bearer ${accessToken}`)
+          .set("Authorization", `Bearer ${token}`)
           .send(validReqBody);
       });
 
@@ -610,7 +617,7 @@ describe("Task router test suite", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .patch(`/task/complete/${(createdTask as ITask)._id}`)
-          .set("Authorization", `Bearer ${accessToken}`)
+          .set("Authorization", `Bearer ${token}`)
           .send(invalidReqBody);
       });
 
@@ -629,7 +636,7 @@ describe("Task router test suite", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .patch(`/task/complete/${(createdTask as ITask)._id}`)
-          .set("Authorization", `Bearer ${accessToken}`)
+          .set("Authorization", `Bearer ${token}`)
           .send(secondInvalidReqBody);
       });
 
@@ -648,7 +655,7 @@ describe("Task router test suite", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .patch(`/task/complete/qwerty123`)
-          .set("Authorization", `Bearer ${accessToken}`)
+          .set("Authorization", `Bearer ${token}`)
           .send(validReqBody);
       });
 
@@ -663,7 +670,7 @@ describe("Task router test suite", () => {
       });
     });
 
-    context("Without providing 'accessToken'", () => {
+    context("Without providing 'token'", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .patch(`/task/complete/${(createdTask as ITask)._id}`)
@@ -679,7 +686,7 @@ describe("Task router test suite", () => {
       });
     });
 
-    context("With invalid 'accessToken'", () => {
+    context("With invalid 'token'", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .patch(`/task/complete/${(createdTask as ITask)._id}`)
@@ -700,7 +707,7 @@ describe("Task router test suite", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .patch(`/task/complete/${(createdTask as ITask)._id}`)
-          .set("Authorization", `Bearer ${secondAccessToken}`)
+          .set("Authorization", `Bearer ${secondToken}`)
           .send(validReqBody);
       });
 

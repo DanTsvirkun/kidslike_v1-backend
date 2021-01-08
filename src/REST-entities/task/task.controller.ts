@@ -16,10 +16,14 @@ export const createTask = async (req: Request, res: Response) => {
   const user = req.user as IUser;
   const { title, reward } = req.body;
   if (!req.file) {
-    return res.status(400).send({ message: "Please, upload an image" });
+    return res
+      .status(400)
+      .send({ message: "Please, upload an image", status: false });
   }
   if (req.fileValidationError) {
-    return res.status(415).send({ message: req.fileValidationError });
+    return res
+      .status(415)
+      .send({ message: req.fileValidationError, status: false });
   }
   const imageUrl = (await uploadImage(req.file)) as string;
   const startOfTheWeek = DateTime.local().startOf("week");
@@ -42,6 +46,8 @@ export const createTask = async (req: Request, res: Response) => {
   (userCurrentWeek as IWeek).tasks.push(task._id);
   await (userCurrentWeek as IWeek).save();
   return res.status(201).send({
+    message: "Task successfully created",
+    status: true,
     title,
     reward: Number(reward),
     imageUrl,
@@ -85,7 +91,9 @@ export const makeTaskActive = async (
           (userTask) => userTask._id.toString() === taskId
         )
       ) {
-        return res.status(404).send({ message: "Task not found" });
+        return res
+          .status(404)
+          .send({ message: "Task not found", status: false });
       }
       for (let i = 0; i < 7; i++) {
         if (!(task as ITask).days[i].isActive && days[i]) {
@@ -99,6 +107,8 @@ export const makeTaskActive = async (
       await task.save();
       await (week as IWeek).save();
       return res.status(200).send({
+        message: "Task successfully became active",
+        status: true,
         updatedWeekPlannedRewards: week?.rewardsPlanned,
         updatedTask: {
           title: task.title,
@@ -143,21 +153,27 @@ export const markTaskCompleted = async (
           (userTask) => userTask._id.toString() === taskId
         )
       ) {
-        return res.status(404).send({ message: "Task not found" });
+        return res
+          .status(404)
+          .send({ message: "Task not found", status: false });
       }
       const dayToUpdate = task.days.find((day) => day.date === date);
       if (!dayToUpdate) {
-        return res.status(404).send({ message: "Day not found" });
+        return res
+          .status(404)
+          .send({ message: "Day not found", status: false });
       }
       if (dayToUpdate.isCompleted) {
-        return res
-          .status(400)
-          .send({ message: "This task is already completed on provided day" });
+        return res.status(400).send({
+          message: "This task is already completed on provided day",
+          status: false,
+        });
       }
       if (!dayToUpdate.isActive) {
-        return res
-          .status(400)
-          .send({ message: "This task doesn't exist on provided day" });
+        return res.status(400).send({
+          message: "This task doesn't exist on provided day",
+          status: false,
+        });
       }
       const week = await WeekModel.findById(
         (data as IUserPopulated).currentWeek._id
@@ -169,6 +185,8 @@ export const markTaskCompleted = async (
       await user.save();
       await (week as IWeek).save();
       return res.status(200).send({
+        message: "Task has been successfully completed",
+        status: true,
         updatedBalance: user?.balance,
         updatedWeekGainedRewards: week?.rewardsGained,
         updatedTask: {

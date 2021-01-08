@@ -10,11 +10,11 @@ import { ruGifts, enGifts } from "./gifts";
 import {
   IUser,
   IUserPopulated,
-} from "./../helpers/typescript-helpers/interfaces";
+} from "../helpers/typescript-helpers/interfaces";
 
 describe("Gift router test suite", () => {
   let app: Application;
-  let accessToken: string;
+  let token: string;
   let response: Response;
   let createdUser: IUser | IUserPopulated | null;
   let updatedUser: IUser | IUserPopulated | null;
@@ -34,37 +34,37 @@ describe("Gift router test suite", () => {
     response = await supertest(app)
       .post("/auth/login")
       .send({ email: "test@email.com", password: "qwerty123" });
-    accessToken = response.body.accessToken;
-    createdUser = await UserModel.findOne({ _id: response.body.data.id });
+    token = response.body.token;
+    createdUser = await UserModel.findOne({ _id: response.body.user.id });
   });
 
   afterAll(async () => {
-    await UserModel.deleteOne({ _id: response.body.data.id });
-    await SessionModel.deleteOne({ _id: response.body.sid });
-    await WeekModel.deleteOne({ _id: response.body.data.week._id });
+    await UserModel.deleteOne({ _id: response.body.user.id });
+    await SessionModel.deleteMany({ uid: response.body.user.id });
+    await WeekModel.deleteOne({ _id: response.body.week._id });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[0]._id,
+      _id: response.body.week.tasks[0]._id,
     });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[1]._id,
+      _id: response.body.week.tasks[1]._id,
     });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[2]._id,
+      _id: response.body.week.tasks[2]._id,
     });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[3]._id,
+      _id: response.body.week.tasks[3]._id,
     });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[4]._id,
+      _id: response.body.week.tasks[4]._id,
     });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[5]._id,
+      _id: response.body.week.tasks[5]._id,
     });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[6]._id,
+      _id: response.body.week.tasks[6]._id,
     });
     await TaskModel.deleteOne({
-      _id: response.body.data.week.tasks[7]._id,
+      _id: response.body.week.tasks[7]._id,
     });
     await mongoose.connection.close();
   });
@@ -76,7 +76,7 @@ describe("Gift router test suite", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .get("/gift")
-          .set("Authorization", `Bearer ${accessToken}`);
+          .set("Authorization", `Bearer ${token}`);
       });
 
       it("Should return a 200 status code", () => {
@@ -84,11 +84,15 @@ describe("Gift router test suite", () => {
       });
 
       it("Should return an expected result", () => {
-        expect(response.body).toEqual(ruGifts);
+        expect(response.body).toEqual({
+          message: "Gifts successfully loaded",
+          status: true,
+          ruGifts,
+        });
       });
     });
 
-    context("Without providing 'accessToken'", () => {
+    context("Without providing 'token'", () => {
       beforeAll(async () => {
         response = await supertest(app).get("/gift");
       });
@@ -102,7 +106,7 @@ describe("Gift router test suite", () => {
       });
     });
 
-    context("With invalid 'accessToken'", () => {
+    context("With invalid 'token'", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .get("/gift")
@@ -126,7 +130,7 @@ describe("Gift router test suite", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .get("/gift/en")
-          .set("Authorization", `Bearer ${accessToken}`);
+          .set("Authorization", `Bearer ${token}`);
       });
 
       it("Should return a 200 status code", () => {
@@ -134,11 +138,15 @@ describe("Gift router test suite", () => {
       });
 
       it("Should return an expected result", () => {
-        expect(response.body).toEqual(enGifts);
+        expect(response.body).toEqual({
+          message: "Gifts successfully loaded",
+          status: true,
+          enGifts,
+        });
       });
     });
 
-    context("Without providing 'accessToken'", () => {
+    context("Without providing 'token'", () => {
       beforeAll(async () => {
         response = await supertest(app).get("/gift/en");
       });
@@ -152,7 +160,7 @@ describe("Gift router test suite", () => {
       });
     });
 
-    context("With invalid 'accessToken'", () => {
+    context("With invalid 'token'", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .get("/gift/en")
@@ -186,7 +194,7 @@ describe("Gift router test suite", () => {
         await (createdUser as IUser).save();
         response = await supertest(app)
           .patch("/gift")
-          .set("Authorization", `Bearer ${accessToken}`)
+          .set("Authorization", `Bearer ${token}`)
           .send(validReqBody);
         updatedUser = await UserModel.findOne({
           _id: (createdUser as IUser)._id,
@@ -199,6 +207,8 @@ describe("Gift router test suite", () => {
 
       it("Should return an expected result", () => {
         expect(response.body).toEqual({
+          message: "Gift successfully purchased",
+          status: true,
           updatedBalance: 0,
           purchasedGiftIds: [1, 2, 8],
         });
@@ -213,7 +223,7 @@ describe("Gift router test suite", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .patch("/gift")
-          .set("Authorization", `Bearer ${accessToken}`)
+          .set("Authorization", `Bearer ${token}`)
           .send(validReqBody);
       });
 
@@ -230,7 +240,7 @@ describe("Gift router test suite", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .patch("/gift")
-          .set("Authorization", `Bearer ${accessToken}`)
+          .set("Authorization", `Bearer ${token}`)
           .send(invalidReqBody);
       });
 
@@ -245,7 +255,7 @@ describe("Gift router test suite", () => {
       });
     });
 
-    context("Without providing 'accessToken'", () => {
+    context("Without providing 'token'", () => {
       beforeAll(async () => {
         response = await supertest(app).patch("/gift").send(validReqBody);
       });
@@ -259,7 +269,7 @@ describe("Gift router test suite", () => {
       });
     });
 
-    context("With invalid 'accessToken'", () => {
+    context("With invalid 'token'", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .patch("/gift")

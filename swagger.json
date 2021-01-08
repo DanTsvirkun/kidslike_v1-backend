@@ -53,7 +53,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
+                  "$ref": "#/components/schemas/LoginResponse"
                 }
               }
             }
@@ -133,72 +133,13 @@
         }
       }
     },
-    "/auth/refresh": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Get new pair of tokens (use Bearer {refreshToken} instead of accessToken)",
-        "security": [{ "Bearer": [] }],
-        "parameters": [],
-        "requestBody": {
-          "description": "Object with session's id",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RefreshTokensRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RefreshTokensResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request body / No token provided",
-            "content": {}
-          },
-          "401": {
-            "description": "Unauthorized (invalid refresh token)",
-            "content": {}
-          },
-          "404": {
-            "description": "Invalid user / Invalid session",
-            "content": {}
-          }
-        }
-      }
-    },
     "/auth/google": {
       "get": {
         "tags": ["Auth"],
         "summary": "Google authentication. WARNING: Works only for sign-in, after registered on front-end (if you're writing your back-end for a SPECIFIC front-end, then you can configure it right to work both for sign-up & sign-in)",
         "responses": {
           "200": {
-            "description": "Successful operation (redirect to front-end with accessToken, refreshToken and sid in query). Then use GET /user",
-            "content": {}
-          },
-          "403": {
-            "description": "Not registered or registered with postman",
-            "content": {}
-          }
-        }
-      }
-    },
-    "/auth/facebook": {
-      "get": {
-        "tags": ["Auth"],
-        "summary": "Facebook authentication. WARNING: Works only for sign-in, after registered on front-end (if you're writing your back-end for a SPECIFIC front-end, then you can configure it right to work both for sign-up & sign-in)",
-        "responses": {
-          "200": {
-            "description": "Successful operation (redirect to front-end with accessToken, refreshToken and sid in query). Then use GET /user",
+            "description": "Successful operation (redirect to front-end with token, refreshToken and sid in query). Then use GET /user",
             "content": {}
           },
           "403": {
@@ -469,21 +410,6 @@
           }
         }
       },
-      "RegistrationResponse": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "description": "User's email",
-            "format": "email"
-          },
-          "id": {
-            "type": "string",
-            "description": "User's id",
-            "example": "507f1f77bcf86cd799439011"
-          }
-        }
-      },
       "LoginRequest": {
         "required": ["email", "password"],
         "type": "object",
@@ -503,20 +429,18 @@
       "LoginResponse": {
         "type": "object",
         "properties": {
-          "accessToken": {
+          "message": {
+            "type": "string",
+            "example": "Successfully authenticated"
+          },
+          "status": {
+            "type": "boolean",
+            "example": "true"
+          },
+          "token": {
             "type": "string",
             "description": "Session's access token (needed for all requests)",
             "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZmMyMDg1YmQwOTM2NTI4MTA3Y2UyNzQiLCJzaWQiOiI1ZmMyZDJmY2UxZDIwNTA2NzAyYmRkMjIiLCJpYXQiOjE2MDY2MDM1MTYsImV4cCI6MTYwNjYwNzExNn0.rJ_QjU4KvA76H96RHsvOBChK0Vjbd0NmqjMxdQVJIXA"
-          },
-          "refreshToken": {
-            "type": "string",
-            "description": "Session's refresh token (needed for /auth/refresh)",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZmMyMDg1YmQwOTM2NTI4MTA3Y2UyNzQiLCJzaWQiOiI1ZmMyZDJmY2UxZDIwNTA2NzAyYmRkMjIiLCJpYXQiOjE2MDY2MDM1MTYsImV4cCI6MTYwNjYwNzExNn0.rJ_QjU4KvA76H96RHsvOBChK0Vjbd0NmqjMxdQVJIXB"
-          },
-          "sid": {
-            "type": "string",
-            "description": "Session's id (needed for /auth/refresh)",
-            "example": "507f1f77bcf86cd799439011"
           },
           "data": {
             "type": "object",
@@ -541,10 +465,15 @@
                 "type": "object",
                 "description": "User's current week",
                 "properties": {
-                  "dates": {
+                  "startWeekDate": {
                     "type": "string",
-                    "description": "Week date span",
-                    "example": "2020-12-28/2021-1-3"
+                    "description": "Week start date",
+                    "example": "2020-12-28"
+                  },
+                  "endWeekDate": {
+                    "type": "string",
+                    "description": "Week end date",
+                    "example": "2021-1-3"
                   },
                   "rewardsGained": {
                     "type": "integer",
@@ -665,36 +594,6 @@
           }
         }
       },
-      "RefreshTokensRequest": {
-        "type": "object",
-        "properties": {
-          "sid": {
-            "type": "string",
-            "description": "Session's ('sid' field after authentication)",
-            "example": "507f1f77bcf86cd799439011"
-          }
-        }
-      },
-      "RefreshTokensResponse": {
-        "type": "object",
-        "properties": {
-          "newAccessToken": {
-            "type": "string",
-            "description": "Access token",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZmMyMDg1YmQwOTM2NTI4MTA3Y2UyNzQiLCJzaWQiOiI1ZmMyZDJmY2UxZDIwNTA2NzAyYmRkMjIiLCJpYXQiOjE2MDY2MDM1MTYsImV4cCI6MTYwNjYwNzExNn0.rJ_QjU4KvA76H96RHsvOBChK0Vjbd0NmqjMxdQVJIXA"
-          },
-          "newRefreshToken": {
-            "type": "string",
-            "description": "Refresh token",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZmMyMDg1YmQwOTM2NTI4MTA3Y2UyNzQiLCJzaWQiOiI1ZmMyZDJmY2UxZDIwNTA2NzAyYmRkMjIiLCJpYXQiOjE2MDY2MDM1MTYsImV4cCI6MTYwNjYwNzExNn0.rJ_QjU4KvA76H96RHsvOBChK0Vjbd0NmqjMxdQVJIXB"
-          },
-          "newSid": {
-            "type": "string",
-            "description": "New session's id",
-            "example": "507f1f77bcf86cd799439011"
-          }
-        }
-      },
       "TaskRequest": {
         "type": "object",
         "required": ["title", "reward"],
@@ -715,6 +614,14 @@
       "NewTask": {
         "type": "object",
         "properties": {
+          "message": {
+            "type": "string",
+            "example": "Task successfully created"
+          },
+          "status": {
+            "type": "boolean",
+            "example": "true"
+          },
           "title": {
             "type": "string",
             "description": "Task's title",
@@ -819,6 +726,14 @@
       "ActiveTaskResponse": {
         "type": "object",
         "properties": {
+          "message": {
+            "type": "string",
+            "example": "Task successfully became active"
+          },
+          "status": {
+            "type": "boolean",
+            "example": "true"
+          },
           "updatedWeekPlannedRewards": {
             "type": "integer",
             "description": "Week's new amount of planned rewards",
@@ -927,6 +842,14 @@
       "CompleteTaskResponse": {
         "type": "object",
         "properties": {
+          "message": {
+            "type": "string",
+            "example": "Task has been successfully completed"
+          },
+          "status": {
+            "type": "boolean",
+            "example": "true"
+          },
           "updatedBalance": {
             "type": "integer",
             "description": "User's new balance",
@@ -1027,81 +950,94 @@
         }
       },
       "GetGifts": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "description": "Gift",
-          "properties": {
-            "title": {
-              "type": "string",
-              "description": "Gift's title",
-              "example": "Gift 1"
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Gifts successfully loaded"
+          },
+          "status": {
+            "type": "boolean",
+            "example": "true"
+          },
+          "ruGifts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Gift",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Gift's title",
+                  "example": "Gift 1"
+                },
+                "price": {
+                  "type": "integer",
+                  "description": "Gift's price",
+                  "example": 50
+                },
+                "imageUrl": {
+                  "type": "string",
+                  "description": "Gift's image URL"
+                },
+                "id": {
+                  "type": "string",
+                  "description": "Gift's id"
+                }
+              }
             },
-            "price": {
-              "type": "integer",
-              "description": "Gift's price",
-              "example": 50
-            },
-            "imageUrl": {
-              "type": "string",
-              "description": "Gift's image URL"
-            },
-            "id": {
-              "type": "string",
-              "description": "Gift's id"
-            }
+            "example": [
+              {
+                "title": "Сладости",
+                "price": 40,
+                "imageUrl": "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(8).png",
+                "id": 1
+              },
+              {
+                "title": "Поход в кино",
+                "price": 90,
+                "imageUrl": "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(9).png",
+                "id": 2
+              },
+              {
+                "title": "Подарок",
+                "price": 100,
+                "imageUrl": "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(10).png",
+                "id": 3
+              },
+              {
+                "title": "Вечер пиццы",
+                "price": 90,
+                "imageUrl": "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(11).png",
+                "id": 4
+              },
+              {
+                "title": "Вечеринка с друзьями",
+                "price": 120,
+                "imageUrl": "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(12).png",
+                "id": 5
+              },
+              {
+                "title": "Поход в макдональдс",
+                "price": 80,
+                "imageUrl": "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(13).png",
+                "id": 6
+              },
+              {
+                "title": "Желание",
+                "price": 200,
+                "imageUrl": "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(14).png",
+                "id": 7
+              },
+              {
+                "title": "Поход на каток",
+                "price": 100,
+                "imageUrl": "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(15).png",
+                "id": 8
+              }
+            ]
           }
-        },
-        "example": [
-          {
-            "title": "Сладости",
-            "price": 40,
-            "imageUrl": "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(8).png",
-            "id": 1
-          },
-          {
-            "title": "Поход в кино",
-            "price": 90,
-            "imageUrl": "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(9).png",
-            "id": 2
-          },
-          {
-            "title": "Подарок",
-            "price": 100,
-            "imageUrl": "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(10).png",
-            "id": 3
-          },
-          {
-            "title": "Вечер пиццы",
-            "price": 90,
-            "imageUrl": "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(11).png",
-            "id": 4
-          },
-          {
-            "title": "Вечеринка с друзьями",
-            "price": 120,
-            "imageUrl": "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(12).png",
-            "id": 5
-          },
-          {
-            "title": "Поход в макдональдс",
-            "price": 80,
-            "imageUrl": "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(13).png",
-            "id": 6
-          },
-          {
-            "title": "Желание",
-            "price": 200,
-            "imageUrl": "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(14).png",
-            "id": 7
-          },
-          {
-            "title": "Поход на каток",
-            "price": 100,
-            "imageUrl": "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(15).png",
-            "id": 8
-          }
-        ]
+        }
       },
       "BuyGifts": {
         "type": "object",
@@ -1123,6 +1059,14 @@
       "BoughtGifts": {
         "type": "object",
         "properties": {
+          "message": {
+            "type": "string",
+            "example": "Gift successfully purchased"
+          },
+          "status": {
+            "type": "boolean",
+            "example": "true"
+          },
           "updatedBalance": {
             "type": "integer",
             "description": "User's new balance",
@@ -1145,123 +1089,142 @@
         "type": "object",
         "description": "User's current week",
         "properties": {
-          "dates": {
+          "message": {
             "type": "string",
-            "description": "Week date span",
-            "example": "2020-12-28/2021-1-3"
+            "example": "Week successfully loaded"
           },
-          "rewardsGained": {
-            "type": "integer",
-            "description": "Amount of rewards gained this week",
-            "example": 5
+          "status": {
+            "type": "boolean",
+            "example": "true"
           },
-          "rewardsPlanned": {
-            "type": "integer",
-            "description": "Amount of rewards planned for this week",
-            "example": 10
-          },
-          "_id": {
-            "type": "string",
-            "description": "Week's id",
-            "example": "507f1f77bcf86cd799439016"
-          },
-          "__v": {
-            "type": "integer",
-            "description": "MongoDB document's service versionKey (ignore)"
-          },
-          "tasks": {
-            "type": "array",
-            "description": "Array of week's tasks",
-            "items": {
-              "type": "object",
-              "description": "Week's task",
-              "properties": {
-                "title": {
-                  "type": "string",
-                  "description": "Task's title",
-                  "example": "Task 1"
-                },
-                "reward": {
-                  "type": "integer",
-                  "description": "Task's reward",
-                  "example": 5,
-                  "minimum": 1
-                },
-                "imageUrl": {
-                  "type": "string",
-                  "description": "Task's image URL"
-                },
-                "days": {
-                  "type": "array",
-                  "description": "Task's days",
-                  "items": {
-                    "type": "object",
-                    "description": "Day's task",
-                    "properties": {
-                      "date": {
-                        "type": "string",
-                        "description": "Day's date",
-                        "example": "2020-12-28"
-                      },
-                      "isActive": {
-                        "type": "boolean",
-                        "description": "Task's active status"
-                      },
-                      "isCompleted": {
-                        "type": "boolean",
-                        "description": "Task's complete status"
+          "week": {
+            "type": "object",
+            "description": "User's current week",
+            "properties": {
+              "startWeekDate": {
+                "type": "string",
+                "description": "Week start date",
+                "example": "2020-12-28"
+              },
+              "endWeekDate": {
+                "type": "string",
+                "description": "Week end date",
+                "example": "2021-1-3"
+              },
+              "rewardsGained": {
+                "type": "integer",
+                "description": "Amount of rewards gained this week",
+                "example": 5
+              },
+              "rewardsPlanned": {
+                "type": "integer",
+                "description": "Amount of rewards planned for this week",
+                "example": 10
+              },
+              "_id": {
+                "type": "string",
+                "description": "Week's id",
+                "example": "507f1f77bcf86cd799439016"
+              },
+              "__v": {
+                "type": "integer",
+                "description": "MongoDB document's service versionKey (ignore)"
+              },
+              "tasks": {
+                "type": "array",
+                "description": "Array of week's tasks",
+                "items": {
+                  "type": "object",
+                  "description": "Week's task",
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "description": "Task's title",
+                      "example": "Task 1"
+                    },
+                    "reward": {
+                      "type": "integer",
+                      "description": "Task's reward",
+                      "example": 5,
+                      "minimum": 1
+                    },
+                    "imageUrl": {
+                      "type": "string",
+                      "description": "Task's image URL"
+                    },
+                    "days": {
+                      "type": "array",
+                      "description": "Task's days",
+                      "items": {
+                        "type": "object",
+                        "description": "Day's task",
+                        "properties": {
+                          "date": {
+                            "type": "string",
+                            "description": "Day's date",
+                            "example": "2020-12-28"
+                          },
+                          "isActive": {
+                            "type": "boolean",
+                            "description": "Task's active status"
+                          },
+                          "isCompleted": {
+                            "type": "boolean",
+                            "description": "Task's complete status"
+                          }
+                        }
                       }
                     }
                   }
-                }
-              }
-            },
-            "example": [
-              {
-                "title": "Task 1",
-                "reward": 5,
-                "imageUrl": "example.com/image123",
-                "days": [
+                },
+                "example": [
                   {
-                    "date": "2020-12-28",
-                    "isActive": true,
-                    "isCompleted": true
-                  },
-                  {
-                    "date": "2020-12-29",
-                    "isActive": true,
-                    "isCompleted": false
-                  },
-                  {
-                    "date": "2020-12-30",
-                    "isActive": false,
-                    "isCompleted": false
-                  },
-                  {
-                    "date": "2020-12-31",
-                    "isActive": false,
-                    "isCompleted": false
-                  },
-                  {
-                    "date": "2021-1-1",
-                    "isActive": false,
-                    "isCompleted": false
-                  },
-                  {
-                    "date": "2021-1-2",
-                    "isActive": false,
-                    "isCompleted": false
-                  },
-                  {
-                    "date": "2021-1-3",
-                    "isActive": false,
-                    "isCompleted": false
+                    "title": "Task 1",
+                    "reward": 5,
+                    "imageUrl": "example.com/image123",
+                    "days": [
+                      {
+                        "date": "2020-12-28",
+                        "isActive": true,
+                        "isCompleted": true
+                      },
+                      {
+                        "date": "2020-12-29",
+                        "isActive": true,
+                        "isCompleted": false
+                      },
+                      {
+                        "date": "2020-12-30",
+                        "isActive": false,
+                        "isCompleted": false
+                      },
+                      {
+                        "date": "2020-12-31",
+                        "isActive": false,
+                        "isCompleted": false
+                      },
+                      {
+                        "date": "2021-1-1",
+                        "isActive": false,
+                        "isCompleted": false
+                      },
+                      {
+                        "date": "2021-1-2",
+                        "isActive": false,
+                        "isCompleted": false
+                      },
+                      {
+                        "date": "2021-1-3",
+                        "isActive": false,
+                        "isCompleted": false
+                      }
+                    ],
+                    "_id": "507f1f77bcf86cd799439013",
+                    "__v": 0
                   }
-                ],
-                "_id": "507f1f77bcf86cd799439013",
-                "__v": 0
+                ]
               }
-            ]
+            }
           }
         }
       }

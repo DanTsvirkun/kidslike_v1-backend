@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/server/start.js",
-    "test": "jest",
+    "test": "jest --detectOpenHandles",
     "postinstall": "tsc",
     "dev": "nodemon --files src/server/start.ts"
   },

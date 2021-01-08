@@ -29,9 +29,8 @@ export const newWeek = async (lang: "ru" | "en") => {
     tasks.push(task._id);
   }
   const week = await WeekModel.create({
-    dates: `${startOfTheWeek.toFormat("yyyy-MM-dd")}/${startOfTheWeek
-      .plus({ days: 6 })
-      .toFormat("yyyy-MM-dd")}`,
+    startWeekDate: startOfTheWeek.toFormat("yyyy-MM-dd"),
+    endWeekDate: startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
     rewardsGained: 0,
     rewardsPlanned: 0,
     tasks,
@@ -45,10 +44,8 @@ export const checkWeek = async (user: IUser) => {
     _id: user.currentWeek,
   }).populate("tasks");
   if (
-    (userCurrentWeek as IWeek).dates ===
-    `${startOfTheWeek.toFormat("yyyy-MM-dd")}/${startOfTheWeek
-      .plus({ days: 6 })
-      .toFormat("yyyy-MM-dd")}`
+    (userCurrentWeek as IWeek).startWeekDate ===
+    startOfTheWeek.toFormat("yyyy-MM-dd")
   ) {
     return userCurrentWeek;
   }
