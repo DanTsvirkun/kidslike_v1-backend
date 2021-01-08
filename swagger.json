@@ -713,19 +713,402 @@
       },
       "ActiveTaskRequest": {
         "type": "object",
-        "required": ["days"],
+        "required": ["tasks"],
         "properties": {
-          "days": {
+          "tasks": {
             "type": "array",
-            "minumum": 8,
-            "maximum": 8,
-            "description": "Array of seven booleans, which represent which day of the week is active, and which isn't",
-            "items": {
-              "type": "boolen",
-              "description": "Day's date"
-            },
-            "example": [true, true, false, true, false, false, false]
+            "description": "Array of all user tasks from tasks page",
+            "properties": {
+              "taskId": {
+                "type": "string",
+                "description": "Task's id",
+                "example": "507f1f77bcf86cd799439011"
+              },
+              "days": {
+                "type": "object",
+                "description": "Task's day",
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "description": "Day's date",
+                    "example": "2020-12-28"
+                  },
+                  "isActive": {
+                    "type": "boolean",
+                    "description": "Task's active status"
+                  },
+                  "isCompleted": {
+                    "type": "boolean",
+                    "description": "Task's complete status"
+                  }
+                }
+              }
+            }
           }
+        },
+        "example": {
+          "tasks": [
+            {
+              "taskId": "507f1f77bcf86cd799439011",
+              "days": [
+                {
+                  "date": "2020-12-28",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-29",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-30",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-31",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-01",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-02",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-03",
+                  "isActive": false,
+                  "isCompleted": false
+                }
+              ]
+            },
+            {
+              "taskId": "507f1f77bcf86cd799439012",
+              "days": [
+                {
+                  "date": "2020-12-28",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-29",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-30",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-31",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-01",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-02",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-03",
+                  "isActive": false,
+                  "isCompleted": false
+                }
+              ]
+            },
+            {
+              "taskId": "507f1f77bcf86cd799439013",
+              "days": [
+                {
+                  "date": "2020-12-28",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-29",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-30",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-31",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-01",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-02",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-03",
+                  "isActive": false,
+                  "isCompleted": false
+                }
+              ]
+            },
+            {
+              "taskId": "507f1f77bcf86cd799439014",
+              "days": [
+                {
+                  "date": "2020-12-28",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-29",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-30",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-31",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-01",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-02",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-03",
+                  "isActive": false,
+                  "isCompleted": false
+                }
+              ]
+            },
+            {
+              "taskId": "507f1f77bcf86cd799439015",
+              "days": [
+                {
+                  "date": "2020-12-28",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-29",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-30",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-31",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-01",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-02",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-03",
+                  "isActive": false,
+                  "isCompleted": false
+                }
+              ]
+            },
+            {
+              "taskId": "507f1f77bcf86cd799439016",
+              "days": [
+                {
+                  "date": "2020-12-28",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-29",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-30",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-31",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-01",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-02",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-03",
+                  "isActive": false,
+                  "isCompleted": false
+                }
+              ]
+            },
+            {
+              "taskId": "507f1f77bcf86cd799439017",
+              "days": [
+                {
+                  "date": "2020-12-28",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-29",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-30",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-31",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-01",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-02",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-03",
+                  "isActive": false,
+                  "isCompleted": false
+                }
+              ]
+            },
+            {
+              "taskId": "507f1f77bcf86cd799439018",
+              "days": [
+                {
+                  "date": "2020-12-28",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-29",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-30",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-31",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-01",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-02",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-03",
+                  "isActive": false,
+                  "isCompleted": false
+                }
+              ]
+            },
+            {
+              "taskId": "507f1f77bcf86cd799439019",
+              "days": [
+                {
+                  "date": "2020-12-28",
+                  "isActive": true,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-29",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-30",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2020-12-31",
+                  "isActive": true,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-01",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-02",
+                  "isActive": false,
+                  "isCompleted": false
+                },
+                {
+                  "date": "2021-01-03",
+                  "isActive": false,
+                  "isCompleted": false
+                }
+              ]
+            }
+          ]
         }
       },
       "ActiveTaskResponse": {
@@ -733,7 +1116,7 @@
         "properties": {
           "message": {
             "type": "string",
-            "example": "Task successfully became active"
+            "example": "Tasks successfully updated"
           },
           "success": {
             "type": "boolean",
@@ -742,94 +1125,401 @@
           "updatedWeekPlannedRewards": {
             "type": "integer",
             "description": "Week's new amount of planned rewards",
-            "example": 3
+            "example": 2
           },
-          "updatedTask": {
-            "type": "object",
-            "properties": {
-              "title": {
-                "type": "string",
-                "description": "Task's title",
-                "example": "Task 1"
-              },
-              "reward": {
-                "type": "integer",
-                "description": "Task's reward",
-                "minimum": 0,
-                "example": 1
-              },
-              "imageUrl": {
-                "type": "string",
-                "description": "Task's image URL"
-              },
-              "id": {
+          "updatedTasks": {
+            "type": "array",
+            "description": "Array of updated tasks",
+            "items": {
+              "type": "object",
+              "description": "Updated task",
+              "taskId": {
                 "type": "string",
                 "description": "Task's id",
                 "example": "507f1f77bcf86cd799439011"
               },
               "days": {
-                "type": "array",
-                "description": "Task's days",
-                "items": {
-                  "type": "object",
-                  "description": "Day's task",
-                  "properties": {
-                    "date": {
-                      "type": "string",
-                      "description": "Day's date",
-                      "example": "2020-12-28"
-                    },
-                    "isActive": {
-                      "type": "boolean",
-                      "description": "Task's active status"
-                    },
-                    "isCompleted": {
-                      "type": "boolean",
-                      "description": "Task's complete status"
-                    }
+                "type": "object",
+                "description": "Task's day",
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "description": "Day's date",
+                    "example": "2020-12-28"
+                  },
+                  "isActive": {
+                    "type": "boolean",
+                    "description": "Task's active status"
+                  },
+                  "isCompleted": {
+                    "type": "boolean",
+                    "description": "Task's complete status"
                   }
-                },
-                "example": [
-                  [
-                    {
-                      "date": "2020-12-28",
-                      "isActive": true,
-                      "isCompleted": true
-                    },
-                    {
-                      "date": "2020-12-29",
-                      "isActive": true,
-                      "isCompleted": false
-                    },
-                    {
-                      "date": "2020-12-30",
-                      "isActive": false,
-                      "isCompleted": false
-                    },
-                    {
-                      "date": "2020-12-31",
-                      "isActive": true,
-                      "isCompleted": false
-                    },
-                    {
-                      "date": "2021-1-1",
-                      "isActive": false,
-                      "isCompleted": false
-                    },
-                    {
-                      "date": "2021-1-2",
-                      "isActive": false,
-                      "isCompleted": false
-                    },
-                    {
-                      "date": "2021-1-3",
-                      "isActive": false,
-                      "isCompleted": false
-                    }
-                  ]
+                }
+              }
+            },
+            "example": [
+              {
+                "taskId": "507f1f77bcf86cd799439011",
+                "days": [
+                  {
+                    "date": "2020-12-28",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-29",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-30",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-31",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-01",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-02",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-03",
+                    "isActive": false,
+                    "isCompleted": false
+                  }
+                ]
+              },
+              {
+                "taskId": "507f1f77bcf86cd799439012",
+                "days": [
+                  {
+                    "date": "2020-12-28",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-29",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-30",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-31",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-01",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-02",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-03",
+                    "isActive": false,
+                    "isCompleted": false
+                  }
+                ]
+              },
+              {
+                "taskId": "507f1f77bcf86cd799439013",
+                "days": [
+                  {
+                    "date": "2020-12-28",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-29",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-30",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-31",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-01",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-02",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-03",
+                    "isActive": false,
+                    "isCompleted": false
+                  }
+                ]
+              },
+              {
+                "taskId": "507f1f77bcf86cd799439014",
+                "days": [
+                  {
+                    "date": "2020-12-28",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-29",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-30",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-31",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-01",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-02",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-03",
+                    "isActive": false,
+                    "isCompleted": false
+                  }
+                ]
+              },
+              {
+                "taskId": "507f1f77bcf86cd799439015",
+                "days": [
+                  {
+                    "date": "2020-12-28",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-29",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-30",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-31",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-01",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-02",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-03",
+                    "isActive": false,
+                    "isCompleted": false
+                  }
+                ]
+              },
+              {
+                "taskId": "507f1f77bcf86cd799439016",
+                "days": [
+                  {
+                    "date": "2020-12-28",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-29",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-30",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-31",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-01",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-02",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-03",
+                    "isActive": false,
+                    "isCompleted": false
+                  }
+                ]
+              },
+              {
+                "taskId": "507f1f77bcf86cd799439017",
+                "days": [
+                  {
+                    "date": "2020-12-28",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-29",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-30",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-31",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-01",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-02",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-03",
+                    "isActive": false,
+                    "isCompleted": false
+                  }
+                ]
+              },
+              {
+                "taskId": "507f1f77bcf86cd799439018",
+                "days": [
+                  {
+                    "date": "2020-12-28",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-29",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-30",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-31",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-01",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-02",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-03",
+                    "isActive": false,
+                    "isCompleted": false
+                  }
+                ]
+              },
+              {
+                "taskId": "507f1f77bcf86cd799439019",
+                "days": [
+                  {
+                    "date": "2020-12-28",
+                    "isActive": true,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-29",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-30",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2020-12-31",
+                    "isActive": true,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-01",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-02",
+                    "isActive": false,
+                    "isCompleted": false
+                  },
+                  {
+                    "date": "2021-01-03",
+                    "isActive": false,
+                    "isCompleted": false
+                  }
                 ]
               }
-            }
+            ]
           }
         }
       },
