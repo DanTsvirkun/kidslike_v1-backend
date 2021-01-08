@@ -139,7 +139,7 @@
         "summary": "Google authentication. WARNING: Works only for sign-in, after registered on front-end (if you're writing your back-end for a SPECIFIC front-end, then you can configure it right to work both for sign-up & sign-in)",
         "responses": {
           "200": {
-            "description": "Successful operation (redirect to front-end with token, refreshToken and sid in query). Then use GET /user",
+            "description": "Successful operation (redirect to front-end with token in query). Then use GET /user",
             "content": {}
           },
           "403": {
