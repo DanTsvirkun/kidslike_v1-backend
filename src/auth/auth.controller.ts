@@ -25,7 +25,7 @@ export const register = async (
   if (existingUser) {
     return res
       .status(409)
-      .send({ message: `User with this email already exists`, status: false });
+      .send({ message: `User with this email already exists`, success: false });
   }
   const passwordHash = await bcrypt.hash(
     password,
@@ -63,7 +63,7 @@ export const register = async (
       }
       return res.status(201).send({
         message: "Successfully registered",
-        status: true,
+        success: true,
         token,
         user: {
           email: (data as IUserPopulated).email,
@@ -85,7 +85,7 @@ export const registerEn = async (
   if (existingUser) {
     return res
       .status(409)
-      .send({ message: `User with this email already exists`, status: false });
+      .send({ message: `User with this email already exists`, success: false });
   }
   const passwordHash = await bcrypt.hash(
     password,
@@ -123,7 +123,7 @@ export const registerEn = async (
       }
       return res.status(201).send({
         message: "Successfully registered",
-        status: true,
+        success: true,
         token,
         user: {
           email: (data as IUserPopulated).email,
@@ -145,16 +145,16 @@ export const login = async (
   if (!user) {
     return res
       .status(403)
-      .send({ message: `User with this email doesn't exist`, status: false });
+      .send({ message: `User with this email doesn't exist`, success: false });
   }
   if (!user.passwordHash) {
-    return res.status(403).send({ message: "Forbidden", status: false });
+    return res.status(403).send({ message: "Forbidden", success: false });
   }
   const isPasswordCorrect = await bcrypt.compare(password, user.passwordHash);
   if (!isPasswordCorrect) {
     return res
       .status(403)
-      .send({ message: "Password is wrong", status: false });
+      .send({ message: "Password is wrong", success: false });
   }
   const session = await SessionModel.create({
     uid: user._id,
@@ -180,7 +180,7 @@ export const login = async (
       }
       return res.status(200).send({
         message: "Successfully authenticated",
-        status: true,
+        success: true,
         token,
         user: {
           email: (data as IUserPopulated).email,
@@ -204,17 +204,17 @@ export const authorize = async (
     try {
       payload = jwt.verify(token, process.env.JWT_SECRET as string);
     } catch (err) {
-      return res.status(401).send({ message: "Unauthorized", status: false });
+      return res.status(401).send({ message: "Unauthorized", success: false });
     }
     const user = await UserModel.findById((payload as IJWTPayload).uid);
     const session = await SessionModel.findById((payload as IJWTPayload).sid);
     if (!user) {
-      return res.status(404).send({ message: "Invalid user", status: false });
+      return res.status(404).send({ message: "Invalid user", success: false });
     }
     if (!session) {
       return res
         .status(404)
-        .send({ message: "Invalid session", status: false });
+        .send({ message: "Invalid session", success: false });
     }
     req.user = user;
     req.session = session;
@@ -222,7 +222,7 @@ export const authorize = async (
   } else
     return res
       .status(400)
-      .send({ message: "No token provided", status: false });
+      .send({ message: "No token provided", success: false });
 };
 
 export const logout = async (req: Request, res: Response) => {
@@ -278,7 +278,7 @@ export const googleRedirect = async (req: Request, res: Response) => {
     return res.status(403).send({
       message:
         "You should register from front-end first (not postman). Google is only for sign-in",
-      status: false,
+      success: false,
     });
   }
   const session = await SessionModel.create({

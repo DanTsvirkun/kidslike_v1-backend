@@ -8,7 +8,7 @@ export const getWeek = async (req: Request, res: Response) => {
   if (currentWeek) {
     return res.status(200).send({
       message: "Week successfully loaded",
-      status: true,
+      success: true,
       week: currentWeek,
     });
   }
@@ -17,7 +17,7 @@ export const getWeek = async (req: Request, res: Response) => {
   await user.save();
   return res
     .status(200)
-    .send({ message: "Week successfully loaded", status: true, week });
+    .send({ message: "Week successfully loaded", success: true, week });
 };
 
 export const getWeekEn = async (req: Request, res: Response) => {
@@ -26,7 +26,7 @@ export const getWeekEn = async (req: Request, res: Response) => {
   if (currentWeek) {
     return res.status(200).send({
       message: "Week successfully loaded",
-      status: true,
+      success: true,
       week: currentWeek,
     });
   }
@@ -35,5 +35,5 @@ export const getWeekEn = async (req: Request, res: Response) => {
   await user.save();
   return res
     .status(200)
-    .send({ message: "Week successfully loaded", status: true, week });
+    .send({ message: "Week successfully loaded", success: true, week });
 };

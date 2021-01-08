@@ -5,13 +5,13 @@ import { IUser } from "../helpers/typescript-helpers/interfaces";
 export const getGifts = async (req: Request, res: Response) => {
   res
     .status(200)
-    .send({ message: "Gifts successfully loaded", status: true, ruGifts });
+    .send({ message: "Gifts successfully loaded", success: true, ruGifts });
 };
 
 export const getGiftsEn = async (req: Request, res: Response) => {
   res
     .status(200)
-    .send({ message: "Gifts successfully loaded", status: true, enGifts });
+    .send({ message: "Gifts successfully loaded", success: true, enGifts });
 };
 
 export const buyGifts = async (req: Request, res: Response) => {
@@ -22,7 +22,9 @@ export const buyGifts = async (req: Request, res: Response) => {
   giftIds.forEach((giftId: number) => {
     const giftToBuy = ruGifts.find((gift) => gift.id === giftId);
     if (!giftToBuy) {
-      return res.status(404).send({ message: "Gift not found", status: false });
+      return res
+        .status(404)
+        .send({ message: "Gift not found", success: false });
     }
     price += giftToBuy.price;
     purchasedGifts.push(giftToBuy.id);
@@ -32,10 +34,12 @@ export const buyGifts = async (req: Request, res: Response) => {
     await user.save();
     return res.status(200).send({
       message: "Gift successfully purchased",
-      status: true,
+      success: true,
       updatedBalance: user.balance,
       purchasedGiftIds: purchasedGifts,
     });
   }
-  return res.status(409).send({ message: "Not enough rewards", status: false });
+  return res
+    .status(409)
+    .send({ message: "Not enough rewards", success: false });
 };

@@ -6,8 +6,8 @@ import tryCatchWrapper from "../../helpers/function-helpers/try-catch-wrapper";
 import validate from "../../helpers/function-helpers/validate";
 import {
   createTask,
-  makeTaskActive,
-  markTaskCompleted,
+  switchTaskActiveStatus,
+  switchTaskCompleteStatus,
 } from "./task.controller";
 import { multerMid } from "../../helpers/function-helpers/multer-config";
 
@@ -46,7 +46,32 @@ const taskDateSchema = Joi.object({
 });
 
 const taskActiveArraySchema = Joi.object({
-  days: Joi.array().min(8).max(8).items(Joi.boolean()).required(),
+  tasks: Joi.array()
+    .items(
+      Joi.object({
+        taskId: Joi.string()
+          .custom((value, helpers) => {
+            const isValidObjectId = mongoose.Types.ObjectId.isValid(value);
+            if (!isValidObjectId) {
+              return helpers.message({
+                custom: "Invalid 'taskId'. Must be a MongoDB ObjectId",
+              });
+            }
+            return value;
+          })
+          .required(),
+        days: Joi.array()
+          .items(
+            Joi.object({
+              date: Joi.string().required(),
+              isActive: Joi.boolean().required(),
+              isCompleted: Joi.boolean().required(),
+            })
+          )
+          .required(),
+      })
+    )
+    .required(),
 });
 
 const router = Router();
@@ -59,18 +84,17 @@ router.post(
   tryCatchWrapper(createTask)
 );
 router.patch(
-  "/active/:taskId",
+  "/active",
   tryCatchWrapper(authorize),
-  validate(taskIdSchema, "params"),
   validate(taskActiveArraySchema),
-  tryCatchWrapper(makeTaskActive)
+  tryCatchWrapper(switchTaskActiveStatus)
 );
 router.patch(
-  "/complete/:taskId",
+  "/switch/:taskId",
   tryCatchWrapper(authorize),
   validate(taskIdSchema, "params"),
   validate(taskDateSchema),
-  tryCatchWrapper(markTaskCompleted)
+  tryCatchWrapper(switchTaskCompleteStatus)
 );
 
 export default router;

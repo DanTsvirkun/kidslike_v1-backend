@@ -90,7 +90,7 @@ describe("Week router test suite", () => {
       it("Should return an expected result", () => {
         expect(response.body).toEqual({
           message: "Week successfully loaded",
-          status: true,
+          success: true,
           week: {
             startWeekDate: startOfTheWeek.toFormat("yyyy-MM-dd"),
             endWeekDate: startOfTheWeek

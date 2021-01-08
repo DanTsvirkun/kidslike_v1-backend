@@ -117,7 +117,7 @@ describe("Auth router test suite", () => {
       it("Should return an expected result", () => {
         expect(response.body).toEqual({
           message: "Successfully registered",
-          status: true,
+          success: true,
           token,
           user: {
             email: validReqBody.email,
@@ -282,7 +282,7 @@ describe("Auth router test suite", () => {
       it("Should return an expected result", () => {
         expect(response.body).toEqual({
           message: "Successfully registered",
-          status: true,
+          success: true,
           token: secondToken,
           user: {
             email: validReqBody.email,
@@ -491,7 +491,7 @@ describe("Auth router test suite", () => {
       it("Should return an expected result", () => {
         expect(response.body).toEqual({
           message: "Successfully authenticated",
-          status: true,
+          success: true,
           token,
           user: {
             email: validReqBody.email,
@@ -639,7 +639,7 @@ describe("Auth router test suite", () => {
       it("Should return an expected result", () => {
         expect(response.body).toEqual({
           message: "Successfully authenticated",
-          status: true,
+          success: true,
           token: secondToken,
           user: {
             email: secondValidReqBody.email,

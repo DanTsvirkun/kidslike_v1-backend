@@ -159,7 +159,7 @@
           "description": "Task's object",
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/formdata": {
               "schema": {
                 "$ref": "#/components/schemas/TaskRequest"
               }
@@ -243,10 +243,10 @@
         }
       }
     },
-    "/task/complete/{taskId}": {
+    "/task/switch/{taskId}": {
       "patch": {
         "tags": ["Task"],
-        "summary": "Mark task as completed",
+        "summary": "Mark task as completed/uncompleted",
         "security": [{ "Bearer": [] }],
         "parameters": [
           {
@@ -433,7 +433,7 @@
             "type": "string",
             "example": "Successfully authenticated"
           },
-          "status": {
+          "success": {
             "type": "boolean",
             "example": "true"
           },
@@ -596,7 +596,7 @@
       },
       "TaskRequest": {
         "type": "object",
-        "required": ["title", "reward"],
+        "required": ["title", "reward", "file"],
         "properties": {
           "title": {
             "type": "string",
@@ -608,6 +608,11 @@
             "description": "Task's reward",
             "minimum": 0,
             "example": 1
+          },
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "description": "Image file"
           }
         }
       },
@@ -618,7 +623,7 @@
             "type": "string",
             "example": "Task successfully created"
           },
-          "status": {
+          "success": {
             "type": "boolean",
             "example": "true"
           },
@@ -730,7 +735,7 @@
             "type": "string",
             "example": "Task successfully became active"
           },
-          "status": {
+          "success": {
             "type": "boolean",
             "example": "true"
           },
@@ -846,7 +851,7 @@
             "type": "string",
             "example": "Task has been successfully completed"
           },
-          "status": {
+          "success": {
             "type": "boolean",
             "example": "true"
           },
@@ -956,7 +961,7 @@
             "type": "string",
             "example": "Gifts successfully loaded"
           },
-          "status": {
+          "success": {
             "type": "boolean",
             "example": "true"
           },
@@ -1063,7 +1068,7 @@
             "type": "string",
             "example": "Gift successfully purchased"
           },
-          "status": {
+          "success": {
             "type": "boolean",
             "example": "true"
           },
@@ -1093,7 +1098,7 @@
             "type": "string",
             "example": "Week successfully loaded"
           },
-          "status": {
+          "success": {
             "type": "boolean",
             "example": "true"
           },

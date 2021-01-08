@@ -86,7 +86,7 @@ describe("Gift router test suite", () => {
       it("Should return an expected result", () => {
         expect(response.body).toEqual({
           message: "Gifts successfully loaded",
-          status: true,
+          success: true,
           ruGifts,
         });
       });
@@ -140,7 +140,7 @@ describe("Gift router test suite", () => {
       it("Should return an expected result", () => {
         expect(response.body).toEqual({
           message: "Gifts successfully loaded",
-          status: true,
+          success: true,
           enGifts,
         });
       });
@@ -208,7 +208,7 @@ describe("Gift router test suite", () => {
       it("Should return an expected result", () => {
         expect(response.body).toEqual({
           message: "Gift successfully purchased",
-          status: true,
+          success: true,
           updatedBalance: 0,
           purchasedGiftIds: [1, 2, 8],
         });

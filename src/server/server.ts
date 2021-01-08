@@ -71,7 +71,9 @@ export default class Server {
         if (err.response) {
           status = err.response.status;
         }
-        return res.status(status).send({ message: err.message });
+        return res
+          .status(status)
+          .send({ message: err.message, success: false });
       }
     );
   }
