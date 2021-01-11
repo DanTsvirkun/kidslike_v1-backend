@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ruGifts, enGifts } from "./gifts";
+import { ruGifts, enGifts, plGifts } from "./gifts";
 import { IUser } from "../helpers/typescript-helpers/interfaces";
 
 export const getGifts = async (req: Request, res: Response) => {
@@ -12,6 +12,12 @@ export const getGiftsEn = async (req: Request, res: Response) => {
   res
     .status(200)
     .send({ message: "Gifts successfully loaded", success: true, enGifts });
+};
+
+export const getGiftsPl = async (req: Request, res: Response) => {
+  res
+    .status(200)
+    .send({ message: "Gifts successfully loaded", success: true, plGifts });
 };
 
 export const buyGifts = async (req: Request, res: Response) => {

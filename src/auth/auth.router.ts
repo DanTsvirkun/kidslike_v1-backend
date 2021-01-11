@@ -1,10 +1,10 @@
 import { Router } from "express";
 import Joi from "joi";
-import mongoose from "mongoose";
 import tryCatchWrapper from "../helpers/function-helpers/try-catch-wrapper";
 import {
   register,
   registerEn,
+  registerPl,
   login,
   googleAuth,
   googleRedirect,
@@ -25,6 +25,11 @@ router.post(
   "/register-en",
   validate(signUpInSchema),
   tryCatchWrapper(registerEn)
+);
+router.post(
+  "/register-pl",
+  validate(signUpInSchema),
+  tryCatchWrapper(registerPl)
 );
 router.post("/login", validate(signUpInSchema), tryCatchWrapper(login));
 router.post("/logout", tryCatchWrapper(authorize), tryCatchWrapper(logout));

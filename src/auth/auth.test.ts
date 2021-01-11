@@ -20,6 +20,7 @@ describe("Auth router test suite", () => {
   let createdSession: ISession | null;
   let token: string;
   let secondToken: string;
+  let thirdToken: string;
   let user: IUser | IUserPopulated | null;
   let startOfTheWeek: DateTime;
   let days: IDay[];
@@ -40,10 +41,15 @@ describe("Auth router test suite", () => {
     const secondCreatedUser = await UserModel.findOne({
       email: "testt@email.com",
     });
-    await UserModel.deleteOne({ email: "test@email.com" });
-    await UserModel.deleteOne({ email: "testt@email.com" });
+    const thirdCreatedUser = await UserModel.findOne({
+      email: "testtt@email.com",
+    });
+    await UserModel.deleteOne({ email: createdUser?.email });
+    await UserModel.deleteOne({ email: secondCreatedUser?.email });
+    await UserModel.deleteOne({ email: thirdCreatedUser?.email });
     await SessionModel.deleteMany({ uid: createdUser?._id });
     await SessionModel.deleteMany({ uid: secondCreatedUser?._id });
+    await SessionModel.deleteMany({ uid: thirdCreatedUser?._id });
     await mongoose.connection.close();
   });
 
@@ -403,6 +409,171 @@ describe("Auth router test suite", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .post("/auth/register-en")
+          .send(invalidReqBody);
+      });
+
+      it("Should return a 400 status code", () => {
+        expect(response.status).toBe(400);
+      });
+
+      it("Should say that 'username' is required", () => {
+        expect(response.body.message).toBe('"password" is required');
+      });
+    });
+  });
+
+  describe("POST /auth/register-pl", () => {
+    let response: Response;
+
+    const validReqBody = {
+      email: "testtt@email.com",
+      password: "qwerty123",
+    };
+
+    const invalidReqBody = {
+      email: "testt@email.com",
+    };
+
+    it("Init endpoint testing", () => {
+      expect(true).toBe(true);
+    });
+
+    context("With validReqBody", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .post("/auth/register-pl")
+          .send(validReqBody);
+        thirdToken = response.body.token;
+      });
+
+      it("Should return a 201 status code", () => {
+        expect(response.status).toBe(201);
+      });
+
+      it("Should return an expected result", () => {
+        expect(response.body).toEqual({
+          message: "Successfully registered",
+          success: true,
+          token: thirdToken,
+          user: {
+            email: validReqBody.email,
+            balance: 0,
+            id: response.body.user.id.toString(),
+          },
+          week: {
+            startWeekDate: startOfTheWeek.toFormat("yyyy-MM-dd"),
+            endWeekDate: startOfTheWeek
+              .plus({ days: 6 })
+              .toFormat("yyyy-MM-dd"),
+            rewardsGained: 0,
+            rewardsPlanned: 0,
+            __v: 0,
+            _id: response.body.week._id,
+            tasks: [
+              {
+                title: "Pościelić łóżko",
+                reward: 3,
+                imageUrl:
+                  "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025.png",
+                days,
+                __v: 0,
+                _id: response.body.week.tasks[0]._id,
+              },
+              {
+                title: "Odkurzyć",
+                reward: 5,
+                imageUrl:
+                  "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(1).png",
+                days,
+                __v: 0,
+                _id: response.body.week.tasks[1]._id,
+              },
+              {
+                title: "Podlać kwiaty",
+                reward: 2,
+                imageUrl:
+                  "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(2).png",
+                days,
+                __v: 0,
+                _id: response.body.week.tasks[2]._id,
+              },
+              {
+                title: "Poczytać książkę",
+                reward: 4,
+                imageUrl:
+                  "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(3).png",
+                days,
+                __v: 0,
+                _id: response.body.week.tasks[3]._id,
+              },
+              {
+                title: "Wyrzucić śmieci",
+                reward: 1,
+                imageUrl:
+                  "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(4).png",
+                days,
+                __v: 0,
+                _id: response.body.week.tasks[4]._id,
+              },
+              {
+                title: "Umyć zęby",
+                reward: 4,
+                imageUrl:
+                  "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(5).png",
+                days,
+                __v: 0,
+                _id: response.body.week.tasks[5]._id,
+              },
+              {
+                title: "Zamieść",
+                reward: 4,
+                imageUrl:
+                  "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(6).png",
+                days,
+                __v: 0,
+                _id: response.body.week.tasks[6]._id,
+              },
+              {
+                title: "Posprzątać zabawki",
+                reward: 2,
+                imageUrl:
+                  "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(7).png",
+                days,
+                __v: 0,
+                _id: response.body.week.tasks[7]._id,
+              },
+            ],
+          },
+        });
+      });
+
+      it("Should create a new user", () => {
+        expect(user).toBeTruthy();
+      });
+    });
+
+    context("With same email", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .post("/auth/register-pl")
+          .send(validReqBody);
+      });
+
+      it("Should return a 409 status code", () => {
+        expect(response.status).toBe(409);
+      });
+
+      it("Should say if email is already in use", () => {
+        expect(response.body.message).toBe(
+          `User with this email already exists`
+        );
+      });
+    });
+
+    context("With invalidReqBody (no 'password' provided)", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .post("/auth/register-pl")
           .send(invalidReqBody);
       });
 

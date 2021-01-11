@@ -6,7 +6,7 @@ import UserModel from "../REST-entities/user/user.model";
 import SessionModel from "../REST-entities/session/session.model";
 import WeekModel from "../REST-entities/week/week.model";
 import TaskModel from "../REST-entities/task/task.model";
-import { ruGifts, enGifts } from "./gifts";
+import { ruGifts, enGifts, plGifts } from "./gifts";
 import {
   IUser,
   IUserPopulated,
@@ -164,6 +164,60 @@ describe("Gift router test suite", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .get("/gift/en")
+          .set("Authorization", `Bearer qwerty123`);
+      });
+
+      it("Should return a 401 status code", () => {
+        expect(response.status).toBe(401);
+      });
+
+      it("Should return an unauthorized status", () => {
+        expect(response.body.message).toEqual("Unauthorized");
+      });
+    });
+  });
+
+  describe("GET /gift/pl", () => {
+    let response: Response;
+
+    context("Valid request", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .get("/gift/pl")
+          .set("Authorization", `Bearer ${token}`);
+      });
+
+      it("Should return a 200 status code", () => {
+        expect(response.status).toBe(200);
+      });
+
+      it("Should return an expected result", () => {
+        expect(response.body).toEqual({
+          message: "Gifts successfully loaded",
+          success: true,
+          plGifts,
+        });
+      });
+    });
+
+    context("Without providing 'token'", () => {
+      beforeAll(async () => {
+        response = await supertest(app).get("/gift/pl");
+      });
+
+      it("Should return a 400 status code", () => {
+        expect(response.status).toBe(400);
+      });
+
+      it("Should say that token wasn't provided", () => {
+        expect(response.body.message).toBe("No token provided");
+      });
+    });
+
+    context("With invalid 'token'", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .get("/gift/pl")
           .set("Authorization", `Bearer qwerty123`);
       });
 

@@ -115,3 +115,62 @@ export const enGifts = [
     id: 16,
   },
 ];
+
+export const plGifts = [
+  {
+    title: "Słodycze",
+    price: 40,
+    imageUrl:
+      "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(8).png",
+    id: 17,
+  },
+  {
+    title: "Wyjście do kina",
+    price: 90,
+    imageUrl:
+      "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(9).png",
+    id: 18,
+  },
+  {
+    title: "Prezent",
+    price: 100,
+    imageUrl:
+      "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(10).png",
+    id: 19,
+  },
+  {
+    title: "Wieczór z pizzą",
+    price: 90,
+    imageUrl:
+      "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(11).png",
+    id: 20,
+  },
+  {
+    title: "Impreza z przyjaciółmi",
+    price: 120,
+    imageUrl:
+      "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(12).png",
+    id: 21,
+  },
+  {
+    title: "Wyjście do McDonald’s",
+    price: 80,
+    imageUrl:
+      "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(13).png",
+    id: 22,
+  },
+  {
+    title: "Życzenie",
+    price: 200,
+    imageUrl:
+      "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(14).png",
+    id: 23,
+  },
+  {
+    title: "Pójście na lodowisko",
+    price: 100,
+    imageUrl:
+      "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(15).png",
+    id: 24,
+  },
+];

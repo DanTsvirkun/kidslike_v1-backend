@@ -99,3 +99,54 @@ export const enTasks = [
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(7).png",
   },
 ];
+
+export const plTasks = [
+  {
+    title: "Pościelić łóżko",
+    reward: 3,
+    imageUrl:
+      "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025.png",
+  },
+  {
+    title: "Odkurzyć",
+    reward: 5,
+    imageUrl:
+      "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(1).png",
+  },
+  {
+    title: "Podlać kwiaty",
+    reward: 2,
+    imageUrl:
+      "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(2).png",
+  },
+  {
+    title: "Poczytać książkę",
+    reward: 4,
+    imageUrl:
+      "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(3).png",
+  },
+  {
+    title: "Wyrzucić śmieci",
+    reward: 1,
+    imageUrl:
+      "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(4).png",
+  },
+  {
+    title: "Umyć zęby",
+    reward: 4,
+    imageUrl:
+      "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(5).png",
+  },
+  {
+    title: "Zamieść",
+    reward: 4,
+    imageUrl:
+      "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(6).png",
+  },
+  {
+    title: "Posprzątać zabawki",
+    reward: 2,
+    imageUrl:
+      "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(7).png",
+  },
+];

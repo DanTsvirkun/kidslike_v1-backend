@@ -135,6 +135,66 @@ export const registerEn = async (
     });
 };
 
+export const registerPl = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { email, password } = req.body;
+  const existingUser = await UserModel.findOne({ email });
+  if (existingUser) {
+    return res
+      .status(409)
+      .send({ message: `User with this email already exists`, success: false });
+  }
+  const passwordHash = await bcrypt.hash(
+    password,
+    Number(process.env.HASH_POWER)
+  );
+  const week = await newWeek("pl");
+  const user = await UserModel.create({
+    email,
+    passwordHash,
+    originUrl: req.headers.origin as string,
+    balance: 0,
+    currentWeek: week._id,
+  });
+  const session = await SessionModel.create({
+    uid: user._id,
+  });
+  const token = jwt.sign(
+    { uid: user._id, sid: session._id },
+    process.env.JWT_SECRET as string
+  );
+  return UserModel.findOne({ email })
+    .populate({
+      path: "currentWeek",
+      model: WeekModel,
+      populate: [
+        {
+          path: "tasks",
+          model: TaskModel,
+        },
+      ],
+    })
+    .exec((err, data) => {
+      if (err) {
+        next(err);
+      }
+      return res.status(201).send({
+        message: "Successfully registered",
+        success: true,
+        token,
+        user: {
+          email: (data as IUserPopulated).email,
+          balance: (data as IUserPopulated).balance,
+          id: (data as IUserPopulated)._id,
+        },
+        week: (data as IUserPopulated).currentWeek,
+      });
+    });
+};
+
 export const login = async (
   req: Request,
   res: Response,

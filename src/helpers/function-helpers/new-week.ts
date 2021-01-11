@@ -1,13 +1,25 @@
 import { DateTime } from "luxon";
 import { IDay, IUser, IWeek } from "../typescript-helpers/interfaces";
 import { MongoDBObjectId } from "../typescript-helpers/types";
-import { ruTasks, enTasks } from "../../REST-entities/task/default-tasks";
+import {
+  ruTasks,
+  enTasks,
+  plTasks,
+} from "../../REST-entities/task/default-tasks";
 import TaskModel from "../../REST-entities/task/task.model";
 import WeekModel from "../../REST-entities/week/week.model";
 
-export const newWeek = async (lang: "ru" | "en") => {
-  let defaultTasks: { title: string; reward: number; imageUrl: string }[];
-  lang === "ru" ? (defaultTasks = [...ruTasks]) : (defaultTasks = [...enTasks]);
+export const newWeek = async (lang: "ru" | "en" | "pl") => {
+  let defaultTasks: { title: string; reward: number; imageUrl: string }[] = [];
+  if (lang === "ru") {
+    defaultTasks = [...ruTasks];
+  }
+  if (lang === "en") {
+    defaultTasks = [...enTasks];
+  }
+  if (lang === "pl") {
+    defaultTasks = [...plTasks];
+  }
   const startOfTheWeek = DateTime.local().startOf("week");
   let days: IDay[] = [];
   for (let i = 0; i < 7; i++) {
