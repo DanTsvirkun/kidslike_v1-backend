@@ -1807,4 +1807,207 @@ describe("Task router test suite", () => {
       });
     });
   });
+
+  describe("PATCH /task/single-active/{taskId}", () => {
+    let response: Response;
+    let days: IDay[];
+    let updatedTask: ITask | null;
+
+    const validReqBody = {
+      days: [false, false, true, false, false, false, true, false],
+    };
+
+    const invalidReqBody = {
+      dates: [false, false, true, false, false, false, true, "qwerty123"],
+    };
+
+    const secondInvalidReqBody = {
+      dates: [false, false, true, false, false, false, true, false, false],
+    };
+
+    it("Init endpoint testing", () => {
+      expect(true).toBe(true);
+    });
+
+    context("Valid request", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/single-active/${(createdTask as ITask)._id}`)
+          .set("Authorization", `Bearer ${token}`)
+          .send(validReqBody);
+        updatedTask = await TaskModel.findOne({
+          _id: (createdTask as ITask)._id,
+        });
+        updatedWeek = await WeekModel.findOne({
+          _id: (createdUser as IUser).currentWeek,
+        });
+        days = [
+          {
+            date: startOfTheWeek.plus({ days: 0 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 1 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
+            isActive: true,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 3 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 4 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 5 }).toFormat("yyyy-MM-dd"),
+            isActive: false,
+            isCompleted: false,
+          },
+          {
+            date: startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
+            isActive: true,
+            isCompleted: false,
+          },
+        ];
+      });
+
+      it("Should return a 200 status code", () => {
+        expect(response.status).toBe(200);
+      });
+
+      it("Should return an expected result", () => {
+        expect(response.body).toEqual({
+          updatedWeekPlannedRewards: 2,
+          updatedTask: {
+            title: "Test",
+            reward: 1,
+            imageUrl: (createdTask as ITask).imageUrl,
+            days,
+            id: (createdTask as ITask)._id.toString(),
+          },
+        });
+      });
+
+      it("Should update task's days in DB", () => {
+        expect((updatedTask as ITask).days[2].isActive).toBeTruthy();
+        expect((updatedTask as ITask).days[6].isActive).toBeTruthy();
+      });
+
+      it("Should update week's planned rewards in DB", () => {
+        expect((updatedWeek as IWeek).rewardsPlanned).toBe(2);
+      });
+    });
+
+    context("With invalidReqBody (one of days is invalid)", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/single-active/${(createdTask as ITask)._id}`)
+          .set("Authorization", `Bearer ${token}`)
+          .send(invalidReqBody);
+      });
+
+      it("Should return a 400 status code", () => {
+        expect(response.status).toBe(400);
+      });
+
+      it("Should return a validation error", () => {
+        expect(response.body.message).toBe('"days" is required');
+      });
+    });
+
+    context("With secondInvalidReqBody (8 days provided)", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/single-active/${(createdTask as ITask)._id}`)
+          .set("Authorization", `Bearer ${token}`)
+          .send(secondInvalidReqBody);
+      });
+
+      it("Should return a 400 status code", () => {
+        expect(response.status).toBe(400);
+      });
+
+      it("Should return a validation error", () => {
+        expect(response.body.message).toBe('"days" is required');
+      });
+    });
+
+    context("With invalid 'taskId'", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/single-active/qwerty123`)
+          .set("Authorization", `Bearer ${token}`)
+          .send(validReqBody);
+      });
+
+      it("Should return a 400 status code", () => {
+        expect(response.status).toBe(400);
+      });
+
+      it("Should say that 'taskId' is invalid", () => {
+        expect(response.body.message).toBe(
+          "Invalid 'taskId'. Must be a MongoDB ObjectId"
+        );
+      });
+    });
+
+    context("Without providing 'token'", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/single-active/${(createdTask as ITask)._id}`)
+          .send(validReqBody);
+      });
+
+      it("Should return a 400 status code", () => {
+        expect(response.status).toBe(400);
+      });
+
+      it("Should say that token wasn't provided", () => {
+        expect(response.body.message).toBe("No token provided");
+      });
+    });
+
+    context("With invalid 'token'", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/single-active/${(createdTask as ITask)._id}`)
+          .set("Authorization", `Bearer qwerty123`)
+          .send(validReqBody);
+      });
+
+      it("Should return a 401 status code", () => {
+        expect(response.status).toBe(401);
+      });
+
+      it("Should return an unauthorized status", () => {
+        expect(response.body.message).toBe("Unauthorized");
+      });
+    });
+
+    context("With another account", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .patch(`/task/single-active/${(createdTask as ITask)._id}`)
+          .set("Authorization", `Bearer ${secondToken}`)
+          .send(validReqBody);
+      });
+
+      it("Should return a 404 status code", () => {
+        expect(response.status).toBe(404);
+      });
+
+      it("Should say that task wasn't found", () => {
+        expect(response.body.message).toBe("Task not found");
+      });
+    });
+  });
 });

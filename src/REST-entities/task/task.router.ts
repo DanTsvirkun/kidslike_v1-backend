@@ -8,6 +8,7 @@ import {
   createTask,
   switchTaskActiveStatus,
   switchTaskCompleteStatus,
+  switchSingleTaskActiveStatus,
 } from "./task.controller";
 import { multerMid } from "../../helpers/function-helpers/multer-config";
 
@@ -43,6 +44,10 @@ const taskDateSchema = Joi.object({
       return value;
     })
     .required(),
+});
+
+const singleTaskActiveArraySchema = Joi.object({
+  days: Joi.array().min(8).max(8).items(Joi.boolean()).required(),
 });
 
 const taskActiveArraySchema = Joi.object({
@@ -88,6 +93,13 @@ router.patch(
   tryCatchWrapper(authorize),
   validate(taskActiveArraySchema),
   tryCatchWrapper(switchTaskActiveStatus)
+);
+router.patch(
+  "/single-active/:taskId",
+  tryCatchWrapper(authorize),
+  validate(taskIdSchema, "params"),
+  validate(singleTaskActiveArraySchema),
+  tryCatchWrapper(switchSingleTaskActiveStatus)
 );
 router.patch(
   "/switch/:taskId",

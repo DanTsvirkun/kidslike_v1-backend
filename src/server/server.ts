@@ -8,6 +8,7 @@ import authRouter from "../auth/auth.router";
 import taskRouter from "../REST-entities/task/task.router";
 import giftRouter from "../gift/gift.router";
 import weekRouter from "../REST-entities/week/week.router";
+import userRouter from "../REST-entities/user/user.router";
 const swaggerDocument = require("../../swagger.json");
 
 export default class Server {
@@ -57,6 +58,7 @@ export default class Server {
     this.app.use("/task", taskRouter);
     this.app.use("/gift", giftRouter);
     this.app.use("/week", weekRouter);
+    this.app.use("/user", userRouter);
     this.app.use(
       "/api-docs",
       swaggerUi.serve,

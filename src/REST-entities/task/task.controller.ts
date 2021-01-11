@@ -5,6 +5,7 @@ import {
   IUser,
   IUserPopulated,
   IWeek,
+  ITask,
   IDay,
 } from "../../helpers/typescript-helpers/interfaces";
 import WeekModel from "../week/week.model";
@@ -117,28 +118,73 @@ export const switchTaskActiveStatus = async (
         }
         await task.save();
       }
-      //   task.days.forEach((day, idx) => {
-      //     if (day.date !== tasks[i].days[idx].date) {
-      //       return res
-      //         .status(400)
-      //         .send({ message: "Invalid day date", success: false });
-      //     }
-      //     if (!day.isActive && tasks[i].days[idx].isActive) {
-      //       (week as IWeek).rewardsPlanned += task.reward;
-      //     }
-      //     if (day.isActive && !tasks[i].days[idx].isActive) {
-      //       (week as IWeek).rewardsPlanned -= task.reward;
-      //     }
-      //     day.isActive = tasks[i].days[idx].isActive;
-      //   });
-      //   await task.save();
-      // }
       await (week as IWeek).save();
       return res.status(200).send({
         message: "Tasks successfully updated",
         success: true,
         updatedWeekPlannedRewards: week?.rewardsPlanned,
         updatedTasks: tasks,
+      });
+    });
+};
+
+export const switchSingleTaskActiveStatus = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const user = req.user as IUser;
+  const { taskId } = req.params;
+  const { days } = req.body;
+  const task = await TaskModel.findById(taskId);
+  return UserModel.findOne({
+    _id: user._id,
+  })
+    .populate({
+      path: "currentWeek",
+      model: WeekModel,
+      populate: [
+        {
+          path: "tasks",
+          model: TaskModel,
+        },
+      ],
+    })
+    .exec(async (err, data) => {
+      const week = await WeekModel.findById(
+        (data as IUserPopulated).currentWeek._id
+      );
+      if (err) {
+        next(err);
+      }
+      if (
+        !task ||
+        !(data as IUserPopulated).currentWeek.tasks.find(
+          (userTask) => userTask._id.toString() === taskId
+        )
+      ) {
+        return res.status(404).send({ message: "Task not found" });
+      }
+      for (let i = 0; i < 7; i++) {
+        if (!(task as ITask).days[i].isActive && days[i]) {
+          (week as IWeek).rewardsPlanned += task.reward;
+        }
+        if ((task as ITask).days[i].isActive && !days[i]) {
+          (week as IWeek).rewardsPlanned -= task.reward;
+        }
+        (task as ITask).days[i].isActive = days[i];
+      }
+      await task.save();
+      await (week as IWeek).save();
+      return res.status(200).send({
+        updatedWeekPlannedRewards: week?.rewardsPlanned,
+        updatedTask: {
+          title: task.title,
+          reward: task.reward,
+          imageUrl: task.imageUrl,
+          id: task._id,
+          days: task.days,
+        },
       });
     });
 };
