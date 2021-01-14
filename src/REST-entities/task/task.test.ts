@@ -28,6 +28,7 @@ describe("Task router test suite", () => {
   let secondToken: string;
   let response: Response;
   let secondResponse: Response;
+  let days: IDay[][] = [[], [], [], [], [], [], [], []];
   const startOfTheWeek = DateTime.local().startOf("week");
 
   beforeAll(async () => {
@@ -118,8 +119,8 @@ describe("Task router test suite", () => {
 
   describe("POST /task", () => {
     let response: Response;
-    let days: IDay[];
     let updatedWeek: IWeek | IWeekPopulated | null;
+    let days: IDay[];
 
     it("Init endpoint testing", () => {
       expect(true).toBe(true);
@@ -142,36 +143,43 @@ describe("Task router test suite", () => {
             date: startOfTheWeek.plus({ days: 0 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
+            _id: response.body.days[0]._id,
           },
           {
             date: startOfTheWeek.plus({ days: 1 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
+            _id: response.body.days[1]._id,
           },
           {
             date: startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
+            _id: response.body.days[2]._id,
           },
           {
             date: startOfTheWeek.plus({ days: 3 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
+            _id: response.body.days[3]._id,
           },
           {
             date: startOfTheWeek.plus({ days: 4 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
+            _id: response.body.days[4]._id,
           },
           {
             date: startOfTheWeek.plus({ days: 5 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
+            _id: response.body.days[5]._id,
           },
           {
             date: startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
+            _id: response.body.days[6]._id,
           },
         ];
       });
@@ -1403,6 +1411,12 @@ describe("Task router test suite", () => {
           .patch(`/task/active`)
           .set("Authorization", `Bearer ${token}`)
           .send(validReqBody);
+        for (let i = 0; i < 8; i++) {
+          for (let j = 0; j < 7; j++) {
+            (validReqBody.tasks[i].days[j] as IDay)._id =
+              response.body.updatedTasks[i].days[j]._id;
+          }
+        }
         updatedTask = await TaskModel.findOne({
           _id: (createdTask as ITask)._id,
         });
@@ -1602,36 +1616,43 @@ describe("Task router test suite", () => {
             date: startOfTheWeek.plus({ days: 0 }).toFormat("yyyy-MM-dd"),
             isActive: true,
             isCompleted: false,
+            _id: response.body.updatedTask.days[0]._id,
           },
           {
             date: startOfTheWeek.plus({ days: 1 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
+            _id: response.body.updatedTask.days[1]._id,
           },
           {
             date: startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
+            _id: response.body.updatedTask.days[2]._id,
           },
           {
             date: startOfTheWeek.plus({ days: 3 }).toFormat("yyyy-MM-dd"),
             isActive: true,
             isCompleted: true,
+            _id: response.body.updatedTask.days[3]._id,
           },
           {
             date: startOfTheWeek.plus({ days: 4 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
+            _id: response.body.updatedTask.days[4]._id,
           },
           {
             date: startOfTheWeek.plus({ days: 5 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
+            _id: response.body.updatedTask.days[5]._id,
           },
           {
             date: startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
+            _id: response.body.updatedTask.days[6]._id,
           },
         ];
       });
@@ -1814,15 +1835,15 @@ describe("Task router test suite", () => {
     let updatedTask: ITask | null;
 
     const validReqBody = {
-      days: [false, false, true, false, false, false, true, false],
+      days: [false, false, true, false, false, false, true],
     };
 
     const invalidReqBody = {
-      dates: [false, false, true, false, false, false, true, "qwerty123"],
+      days: [false, false, true, false, false, false, "qwerty123"],
     };
 
     const secondInvalidReqBody = {
-      dates: [false, false, true, false, false, false, true, false, false],
+      days: [false, false, true, false, false, false, true, false],
     };
 
     it("Init endpoint testing", () => {
@@ -1846,36 +1867,43 @@ describe("Task router test suite", () => {
             date: startOfTheWeek.plus({ days: 0 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
+            _id: response.body.updatedTask.days[0]._id,
           },
           {
             date: startOfTheWeek.plus({ days: 1 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
+            _id: response.body.updatedTask.days[1]._id,
           },
           {
             date: startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
             isActive: true,
             isCompleted: false,
+            _id: response.body.updatedTask.days[2]._id,
           },
           {
             date: startOfTheWeek.plus({ days: 3 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
+            _id: response.body.updatedTask.days[3]._id,
           },
           {
             date: startOfTheWeek.plus({ days: 4 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
+            _id: response.body.updatedTask.days[4]._id,
           },
           {
             date: startOfTheWeek.plus({ days: 5 }).toFormat("yyyy-MM-dd"),
             isActive: false,
             isCompleted: false,
+            _id: response.body.updatedTask.days[5]._id,
           },
           {
             date: startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
             isActive: true,
             isCompleted: false,
+            _id: response.body.updatedTask.days[6]._id,
           },
         ];
       });
@@ -1920,7 +1948,7 @@ describe("Task router test suite", () => {
       });
 
       it("Should return a validation error", () => {
-        expect(response.body.message).toBe('"days" is required');
+        expect(response.body.message).toBe('"days[6]" must be a boolean');
       });
     });
 
@@ -1937,7 +1965,9 @@ describe("Task router test suite", () => {
       });
 
       it("Should return a validation error", () => {
-        expect(response.body.message).toBe('"days" is required');
+        expect(response.body.message).toBe(
+          '"days" must contain less than or equal to 7 items'
+        );
       });
     });
 

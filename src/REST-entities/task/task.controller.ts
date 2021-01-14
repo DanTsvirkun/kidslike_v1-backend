@@ -76,25 +76,23 @@ export const switchTaskActiveStatus = async (
         },
       ],
     })
-    .exec(async (err, data) => {
+    .exec(async (err: any, data: IUserPopulated) => {
       if (err) {
         next(err);
       }
-      if (tasks.length !== (data as IUserPopulated).currentWeek.tasks.length) {
+      if (tasks.length !== data.currentWeek.tasks.length) {
         return res.status(400).send({
           message: "Invalid tasks amount",
-          neededTasksAmount: (data as IUserPopulated).currentWeek.tasks.length,
+          neededTasksAmount: data.currentWeek.tasks.length,
           success: false,
         });
       }
-      const week = await WeekModel.findById(
-        (data as IUserPopulated).currentWeek._id
-      );
+      const week = await WeekModel.findById(data.currentWeek._id);
       for (let i = 0; i < tasks.length; i++) {
         const task = await TaskModel.findById(tasks[i].taskId);
         if (
           !task ||
-          !(data as IUserPopulated).currentWeek.tasks.find(
+          !data.currentWeek.tasks.find(
             (userTask) => userTask._id.toString() === task._id.toString()
           )
         ) {
@@ -102,19 +100,19 @@ export const switchTaskActiveStatus = async (
             .status(404)
             .send({ message: "Task not found", success: false });
         }
-        for (let n = 0; n < task.days.length; n++) {
-          if (task.days[n].date !== tasks[i].days[n].date) {
+        for (let j = 0; j < task.days.length; j++) {
+          if (task.days[j].date !== tasks[i].days[j].date) {
             return res
               .status(400)
               .send({ message: "Invalid day date", success: false });
           }
-          if (!task.days[n].isActive && tasks[i].days[n].isActive) {
+          if (!task.days[j].isActive && tasks[i].days[j].isActive) {
             (week as IWeek).rewardsPlanned += task.reward;
           }
-          if (task.days[n].isActive && !tasks[i].days[n].isActive) {
+          if (task.days[j].isActive && !tasks[i].days[j].isActive) {
             (week as IWeek).rewardsPlanned -= task.reward;
           }
-          task.days[n].isActive = tasks[i].days[n].isActive;
+          task.days[j].isActive = tasks[i].days[j].isActive;
         }
         await task.save();
       }
@@ -150,16 +148,14 @@ export const switchSingleTaskActiveStatus = async (
         },
       ],
     })
-    .exec(async (err, data) => {
-      const week = await WeekModel.findById(
-        (data as IUserPopulated).currentWeek._id
-      );
+    .exec(async (err: any, data: IUserPopulated) => {
+      const week = await WeekModel.findById(data.currentWeek._id);
       if (err) {
         next(err);
       }
       if (
         !task ||
-        !(data as IUserPopulated).currentWeek.tasks.find(
+        !data.currentWeek.tasks.find(
           (userTask) => userTask._id.toString() === taskId
         )
       ) {
@@ -211,13 +207,13 @@ export const switchTaskCompleteStatus = async (
         },
       ],
     })
-    .exec(async (err, data) => {
+    .exec(async (err: any, data: IUserPopulated) => {
       if (err) {
         next(err);
       }
       if (
         !task ||
-        !(data as IUserPopulated).currentWeek.tasks.find(
+        !data.currentWeek.tasks.find(
           (userTask) => userTask._id.toString() === taskId
         )
       ) {
@@ -225,7 +221,7 @@ export const switchTaskCompleteStatus = async (
           .status(404)
           .send({ message: "Task not found", success: false });
       }
-      const dayToUpdate = task.days.find((day) => day.date === date);
+      const dayToUpdate = task.days.find((day: IDay) => day.date === date);
       if (!dayToUpdate) {
         return res
           .status(404)
@@ -237,9 +233,7 @@ export const switchTaskCompleteStatus = async (
           success: false,
         });
       }
-      const week = await WeekModel.findById(
-        (data as IUserPopulated).currentWeek._id
-      );
+      const week = await WeekModel.findById(data.currentWeek._id);
       if (!dayToUpdate.isCompleted) {
         user.balance += task.reward;
         (week as IWeek).rewardsGained += task.reward;

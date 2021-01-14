@@ -10,7 +10,7 @@ import {
 import Server from "../../server/server";
 import UserModel from "../user/user.model";
 import SessionModel from "../session/session.model";
-import WeekModel from "../week/week.model";
+import WeekModel from "./week.model";
 import TaskModel from "../task/task.model";
 
 describe("Week router test suite", () => {
@@ -102,6 +102,9 @@ describe("Week router test suite", () => {
             __v: 0,
             tasks: (createdWeek as IWeekPopulated).tasks.map((task: ITask) => {
               task._id = task._id.toString();
+              task.days.forEach((day) => {
+                day._id = day._id?.toString();
+              });
               return task;
             }),
           },

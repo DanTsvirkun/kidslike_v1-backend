@@ -57,7 +57,7 @@ export const register = async (
         },
       ],
     })
-    .exec((err, data) => {
+    .exec((err: any, data: IUserPopulated) => {
       if (err) {
         next(err);
       }
@@ -66,11 +66,11 @@ export const register = async (
         success: true,
         token,
         user: {
-          email: (data as IUserPopulated).email,
-          balance: (data as IUserPopulated).balance,
-          id: (data as IUserPopulated)._id,
+          email: data.email,
+          balance: data.balance,
+          id: data._id,
         },
-        week: (data as IUserPopulated).currentWeek,
+        week: data.currentWeek,
       });
     });
 };
@@ -117,7 +117,7 @@ export const registerEn = async (
         },
       ],
     })
-    .exec((err, data) => {
+    .exec((err: any, data: IUserPopulated) => {
       if (err) {
         next(err);
       }
@@ -126,11 +126,11 @@ export const registerEn = async (
         success: true,
         token,
         user: {
-          email: (data as IUserPopulated).email,
-          balance: (data as IUserPopulated).balance,
-          id: (data as IUserPopulated)._id,
+          email: data.email,
+          balance: data.balance,
+          id: data._id,
         },
-        week: (data as IUserPopulated).currentWeek,
+        week: data.currentWeek,
       });
     });
 };
@@ -177,7 +177,7 @@ export const registerPl = async (
         },
       ],
     })
-    .exec((err, data) => {
+    .exec((err: any, data: IUserPopulated) => {
       if (err) {
         next(err);
       }
@@ -186,11 +186,11 @@ export const registerPl = async (
         success: true,
         token,
         user: {
-          email: (data as IUserPopulated).email,
-          balance: (data as IUserPopulated).balance,
-          id: (data as IUserPopulated)._id,
+          email: data.email,
+          balance: data.balance,
+          id: data._id,
         },
-        week: (data as IUserPopulated).currentWeek,
+        week: data.currentWeek,
       });
     });
 };
@@ -234,7 +234,7 @@ export const login = async (
         },
       ],
     })
-    .exec((err, data) => {
+    .exec((err: any, data: IUserPopulated) => {
       if (err) {
         next(err);
       }
@@ -243,11 +243,11 @@ export const login = async (
         success: true,
         token,
         user: {
-          email: (data as IUserPopulated).email,
-          balance: (data as IUserPopulated).balance,
-          id: (data as IUserPopulated)._id,
+          email: data.email,
+          balance: data.balance,
+          id: data._id,
         },
-        week: (data as IUserPopulated).currentWeek,
+        week: data.currentWeek,
       });
     });
 };

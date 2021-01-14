@@ -44,6 +44,7 @@ export interface IDay {
   date: string;
   isActive: boolean;
   isCompleted: boolean;
+  _id?: string;
 }
 
 export interface ISession extends Document {

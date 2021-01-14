@@ -20,7 +20,7 @@ export const getAllInfo = async (
         },
       ],
     })
-    .exec((err, data) => {
+    .exec((err: any, data: IUserPopulated) => {
       if (err) {
         next(err);
       }
@@ -28,11 +28,11 @@ export const getAllInfo = async (
         message: "Successfully got all info",
         success: true,
         user: {
-          email: (data as IUserPopulated).email,
-          balance: (data as IUserPopulated).balance,
-          id: (data as IUserPopulated)._id,
+          email: data.email,
+          balance: data.balance,
+          id: data._id,
         },
-        week: (data as IUserPopulated).currentWeek,
+        week: data.currentWeek,
       });
     });
 };

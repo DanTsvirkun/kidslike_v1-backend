@@ -23,7 +23,7 @@ describe("Auth router test suite", () => {
   let thirdToken: string;
   let user: IUser | IUserPopulated | null;
   let startOfTheWeek: DateTime;
-  let days: IDay[];
+  let days: IDay[][] = [[], [], [], [], [], [], [], []];
 
   beforeAll(async () => {
     app = new Server().startForTesting();
@@ -77,43 +77,16 @@ describe("Auth router test suite", () => {
         user = await UserModel.findById(response.body.user.id);
         token = response.body.token;
         startOfTheWeek = DateTime.local().startOf("week");
-        days = [
-          {
-            date: startOfTheWeek.plus({ days: 0 }).toFormat("yyyy-MM-dd"),
-            isActive: false,
-            isCompleted: false,
-          },
-          {
-            date: startOfTheWeek.plus({ days: 1 }).toFormat("yyyy-MM-dd"),
-            isActive: false,
-            isCompleted: false,
-          },
-          {
-            date: startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
-            isActive: false,
-            isCompleted: false,
-          },
-          {
-            date: startOfTheWeek.plus({ days: 3 }).toFormat("yyyy-MM-dd"),
-            isActive: false,
-            isCompleted: false,
-          },
-          {
-            date: startOfTheWeek.plus({ days: 4 }).toFormat("yyyy-MM-dd"),
-            isActive: false,
-            isCompleted: false,
-          },
-          {
-            date: startOfTheWeek.plus({ days: 5 }).toFormat("yyyy-MM-dd"),
-            isActive: false,
-            isCompleted: false,
-          },
-          {
-            date: startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
-            isActive: false,
-            isCompleted: false,
-          },
-        ];
+        for (let i = 0; i < 8; i++) {
+          for (let j = 0; j < 7; j++) {
+            days[i][j] = {
+              date: startOfTheWeek.plus({ days: j }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+              _id: response.body.week.tasks[i].days[j]._id,
+            };
+          }
+        }
       });
 
       it("Should return a 201 status code", () => {
@@ -145,7 +118,7 @@ describe("Auth router test suite", () => {
                 reward: 3,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025.png",
-                days,
+                days: days[0],
                 __v: 0,
                 _id: response.body.week.tasks[0]._id,
               },
@@ -154,7 +127,7 @@ describe("Auth router test suite", () => {
                 reward: 5,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(1).png",
-                days,
+                days: days[1],
                 __v: 0,
                 _id: response.body.week.tasks[1]._id,
               },
@@ -163,7 +136,7 @@ describe("Auth router test suite", () => {
                 reward: 2,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(2).png",
-                days,
+                days: days[2],
                 __v: 0,
                 _id: response.body.week.tasks[2]._id,
               },
@@ -172,7 +145,7 @@ describe("Auth router test suite", () => {
                 reward: 4,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(3).png",
-                days,
+                days: days[3],
                 __v: 0,
                 _id: response.body.week.tasks[3]._id,
               },
@@ -181,7 +154,7 @@ describe("Auth router test suite", () => {
                 reward: 1,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(4).png",
-                days,
+                days: days[4],
                 __v: 0,
                 _id: response.body.week.tasks[4]._id,
               },
@@ -190,7 +163,7 @@ describe("Auth router test suite", () => {
                 reward: 4,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(5).png",
-                days,
+                days: days[5],
                 __v: 0,
                 _id: response.body.week.tasks[5]._id,
               },
@@ -199,7 +172,7 @@ describe("Auth router test suite", () => {
                 reward: 4,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(6).png",
-                days,
+                days: days[6],
                 __v: 0,
                 _id: response.body.week.tasks[6]._id,
               },
@@ -208,7 +181,7 @@ describe("Auth router test suite", () => {
                 reward: 2,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(7).png",
-                days,
+                days: days[7],
                 __v: 0,
                 _id: response.body.week.tasks[7]._id,
               },
@@ -278,6 +251,16 @@ describe("Auth router test suite", () => {
         response = await supertest(app)
           .post("/auth/register-en")
           .send(validReqBody);
+        for (let i = 0; i < 8; i++) {
+          for (let j = 0; j < 7; j++) {
+            days[i][j] = {
+              date: startOfTheWeek.plus({ days: j }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+              _id: response.body.week.tasks[i].days[j]._id,
+            };
+          }
+        }
         secondToken = response.body.token;
       });
 
@@ -310,7 +293,7 @@ describe("Auth router test suite", () => {
                 reward: 3,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025.png",
-                days,
+                days: days[0],
                 __v: 0,
                 _id: response.body.week.tasks[0]._id,
               },
@@ -319,7 +302,7 @@ describe("Auth router test suite", () => {
                 reward: 5,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(1).png",
-                days,
+                days: days[1],
                 __v: 0,
                 _id: response.body.week.tasks[1]._id,
               },
@@ -328,7 +311,7 @@ describe("Auth router test suite", () => {
                 reward: 2,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(2).png",
-                days,
+                days: days[2],
                 __v: 0,
                 _id: response.body.week.tasks[2]._id,
               },
@@ -337,7 +320,7 @@ describe("Auth router test suite", () => {
                 reward: 4,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(3).png",
-                days,
+                days: days[3],
                 __v: 0,
                 _id: response.body.week.tasks[3]._id,
               },
@@ -346,7 +329,7 @@ describe("Auth router test suite", () => {
                 reward: 1,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(4).png",
-                days,
+                days: days[4],
                 __v: 0,
                 _id: response.body.week.tasks[4]._id,
               },
@@ -355,7 +338,7 @@ describe("Auth router test suite", () => {
                 reward: 4,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(5).png",
-                days,
+                days: days[5],
                 __v: 0,
                 _id: response.body.week.tasks[5]._id,
               },
@@ -364,7 +347,7 @@ describe("Auth router test suite", () => {
                 reward: 4,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(6).png",
-                days,
+                days: days[6],
                 __v: 0,
                 _id: response.body.week.tasks[6]._id,
               },
@@ -373,7 +356,7 @@ describe("Auth router test suite", () => {
                 reward: 2,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(7).png",
-                days,
+                days: days[7],
                 __v: 0,
                 _id: response.body.week.tasks[7]._id,
               },
@@ -443,6 +426,16 @@ describe("Auth router test suite", () => {
         response = await supertest(app)
           .post("/auth/register-pl")
           .send(validReqBody);
+        for (let i = 0; i < 8; i++) {
+          for (let j = 0; j < 7; j++) {
+            days[i][j] = {
+              date: startOfTheWeek.plus({ days: j }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+              _id: response.body.week.tasks[i].days[j]._id,
+            };
+          }
+        }
         thirdToken = response.body.token;
       });
 
@@ -475,7 +468,7 @@ describe("Auth router test suite", () => {
                 reward: 3,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025.png",
-                days,
+                days: days[0],
                 __v: 0,
                 _id: response.body.week.tasks[0]._id,
               },
@@ -484,7 +477,7 @@ describe("Auth router test suite", () => {
                 reward: 5,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(1).png",
-                days,
+                days: days[1],
                 __v: 0,
                 _id: response.body.week.tasks[1]._id,
               },
@@ -493,7 +486,7 @@ describe("Auth router test suite", () => {
                 reward: 2,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(2).png",
-                days,
+                days: days[2],
                 __v: 0,
                 _id: response.body.week.tasks[2]._id,
               },
@@ -502,7 +495,7 @@ describe("Auth router test suite", () => {
                 reward: 4,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(3).png",
-                days,
+                days: days[3],
                 __v: 0,
                 _id: response.body.week.tasks[3]._id,
               },
@@ -511,7 +504,7 @@ describe("Auth router test suite", () => {
                 reward: 1,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(4).png",
-                days,
+                days: days[4],
                 __v: 0,
                 _id: response.body.week.tasks[4]._id,
               },
@@ -520,7 +513,7 @@ describe("Auth router test suite", () => {
                 reward: 4,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(5).png",
-                days,
+                days: days[5],
                 __v: 0,
                 _id: response.body.week.tasks[5]._id,
               },
@@ -529,7 +522,7 @@ describe("Auth router test suite", () => {
                 reward: 4,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(6).png",
-                days,
+                days: days[6],
                 __v: 0,
                 _id: response.body.week.tasks[6]._id,
               },
@@ -538,7 +531,7 @@ describe("Auth router test suite", () => {
                 reward: 2,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(7).png",
-                days,
+                days: days[7],
                 __v: 0,
                 _id: response.body.week.tasks[7]._id,
               },
@@ -600,6 +593,11 @@ describe("Auth router test suite", () => {
       password: "qwerty123",
     };
 
+    const thirdValidReqBody = {
+      email: "testtt@email.com",
+      password: "qwerty123",
+    };
+
     const invalidReqBody = {
       email: "test@email.com",
     };
@@ -625,6 +623,16 @@ describe("Auth router test suite", () => {
           uid: response.body.user.id,
         });
         token = response.body.token;
+        for (let i = 0; i < 8; i++) {
+          for (let j = 0; j < 7; j++) {
+            days[i][j] = {
+              date: startOfTheWeek.plus({ days: j }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+              _id: response.body.week.tasks[i].days[j]._id,
+            };
+          }
+        }
       });
 
       afterAll(async () => {
@@ -684,7 +692,7 @@ describe("Auth router test suite", () => {
                 reward: 3,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025.png",
-                days,
+                days: days[0],
                 __v: 0,
                 _id: response.body.week.tasks[0]._id,
               },
@@ -693,7 +701,7 @@ describe("Auth router test suite", () => {
                 reward: 5,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(1).png",
-                days,
+                days: days[1],
                 __v: 0,
                 _id: response.body.week.tasks[1]._id,
               },
@@ -702,7 +710,7 @@ describe("Auth router test suite", () => {
                 reward: 2,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(2).png",
-                days,
+                days: days[2],
                 __v: 0,
                 _id: response.body.week.tasks[2]._id,
               },
@@ -711,7 +719,7 @@ describe("Auth router test suite", () => {
                 reward: 4,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(3).png",
-                days,
+                days: days[3],
                 __v: 0,
                 _id: response.body.week.tasks[3]._id,
               },
@@ -720,7 +728,7 @@ describe("Auth router test suite", () => {
                 reward: 1,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(4).png",
-                days,
+                days: days[4],
                 __v: 0,
                 _id: response.body.week.tasks[4]._id,
               },
@@ -729,7 +737,7 @@ describe("Auth router test suite", () => {
                 reward: 4,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(5).png",
-                days,
+                days: days[5],
                 __v: 0,
                 _id: response.body.week.tasks[5]._id,
               },
@@ -738,7 +746,7 @@ describe("Auth router test suite", () => {
                 reward: 4,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(6).png",
-                days,
+                days: days[6],
                 __v: 0,
                 _id: response.body.week.tasks[6]._id,
               },
@@ -747,7 +755,7 @@ describe("Auth router test suite", () => {
                 reward: 2,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(7).png",
-                days,
+                days: days[7],
                 __v: 0,
                 _id: response.body.week.tasks[7]._id,
               },
@@ -773,6 +781,16 @@ describe("Auth router test suite", () => {
           .post("/auth/login")
           .send(secondValidReqBody);
         secondToken = response.body.token;
+        for (let i = 0; i < 8; i++) {
+          for (let j = 0; j < 7; j++) {
+            days[i][j] = {
+              date: startOfTheWeek.plus({ days: j }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+              _id: response.body.week.tasks[i].days[j]._id,
+            };
+          }
+        }
       });
 
       afterAll(async () => {
@@ -832,7 +850,7 @@ describe("Auth router test suite", () => {
                 reward: 3,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025.png",
-                days,
+                days: days[0],
                 __v: 0,
                 _id: response.body.week.tasks[0]._id,
               },
@@ -841,7 +859,7 @@ describe("Auth router test suite", () => {
                 reward: 5,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(1).png",
-                days,
+                days: days[1],
                 __v: 0,
                 _id: response.body.week.tasks[1]._id,
               },
@@ -850,7 +868,7 @@ describe("Auth router test suite", () => {
                 reward: 2,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(2).png",
-                days,
+                days: days[2],
                 __v: 0,
                 _id: response.body.week.tasks[2]._id,
               },
@@ -859,7 +877,7 @@ describe("Auth router test suite", () => {
                 reward: 4,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(3).png",
-                days,
+                days: days[3],
                 __v: 0,
                 _id: response.body.week.tasks[3]._id,
               },
@@ -868,7 +886,7 @@ describe("Auth router test suite", () => {
                 reward: 1,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(4).png",
-                days,
+                days: days[4],
                 __v: 0,
                 _id: response.body.week.tasks[4]._id,
               },
@@ -877,7 +895,7 @@ describe("Auth router test suite", () => {
                 reward: 4,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(5).png",
-                days,
+                days: days[5],
                 __v: 0,
                 _id: response.body.week.tasks[5]._id,
               },
@@ -886,7 +904,7 @@ describe("Auth router test suite", () => {
                 reward: 4,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(6).png",
-                days,
+                days: days[6],
                 __v: 0,
                 _id: response.body.week.tasks[6]._id,
               },
@@ -895,7 +913,155 @@ describe("Auth router test suite", () => {
                 reward: 2,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(7).png",
-                days,
+                days: days[7],
+                __v: 0,
+                _id: response.body.week.tasks[7]._id,
+              },
+            ],
+          },
+        });
+      });
+    });
+
+    context("With thirdValidReqBody", () => {
+      beforeAll(async () => {
+        response = await supertest(app)
+          .post("/auth/login")
+          .send(thirdValidReqBody);
+        thirdToken = response.body.token;
+        for (let i = 0; i < 8; i++) {
+          for (let j = 0; j < 7; j++) {
+            days[i][j] = {
+              date: startOfTheWeek.plus({ days: j }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+              _id: response.body.week.tasks[i].days[j]._id,
+            };
+          }
+        }
+      });
+
+      afterAll(async () => {
+        await WeekModel.deleteOne({ _id: response.body.week._id });
+        await TaskModel.deleteOne({
+          _id: response.body.week.tasks[0]._id,
+        });
+        await TaskModel.deleteOne({
+          _id: response.body.week.tasks[1]._id,
+        });
+        await TaskModel.deleteOne({
+          _id: response.body.week.tasks[2]._id,
+        });
+        await TaskModel.deleteOne({
+          _id: response.body.week.tasks[3]._id,
+        });
+        await TaskModel.deleteOne({
+          _id: response.body.week.tasks[4]._id,
+        });
+        await TaskModel.deleteOne({
+          _id: response.body.week.tasks[5]._id,
+        });
+        await TaskModel.deleteOne({
+          _id: response.body.week.tasks[6]._id,
+        });
+        await TaskModel.deleteOne({
+          _id: response.body.week.tasks[7]._id,
+        });
+      });
+
+      it("Should return a 200 status code", () => {
+        expect(response.status).toBe(200);
+      });
+
+      it("Should return an expected result", () => {
+        expect(response.body).toEqual({
+          message: "Successfully authenticated",
+          success: true,
+          token: thirdToken,
+          user: {
+            email: thirdValidReqBody.email,
+            balance: 0,
+            id: response.body.user.id.toString(),
+          },
+          week: {
+            startWeekDate: startOfTheWeek.toFormat("yyyy-MM-dd"),
+            endWeekDate: startOfTheWeek
+              .plus({ days: 6 })
+              .toFormat("yyyy-MM-dd"),
+            rewardsGained: 0,
+            rewardsPlanned: 0,
+            __v: 0,
+            _id: response.body.week._id,
+            tasks: [
+              {
+                title: "Pościelić łóżko",
+                reward: 3,
+                imageUrl:
+                  "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025.png",
+                days: days[0],
+                __v: 0,
+                _id: response.body.week.tasks[0]._id,
+              },
+              {
+                title: "Odkurzyć",
+                reward: 5,
+                imageUrl:
+                  "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(1).png",
+                days: days[1],
+                __v: 0,
+                _id: response.body.week.tasks[1]._id,
+              },
+              {
+                title: "Podlać kwiaty",
+                reward: 2,
+                imageUrl:
+                  "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(2).png",
+                days: days[2],
+                __v: 0,
+                _id: response.body.week.tasks[2]._id,
+              },
+              {
+                title: "Poczytać książkę",
+                reward: 4,
+                imageUrl:
+                  "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(3).png",
+                days: days[3],
+                __v: 0,
+                _id: response.body.week.tasks[3]._id,
+              },
+              {
+                title: "Wyrzucić śmieci",
+                reward: 1,
+                imageUrl:
+                  "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(4).png",
+                days: days[4],
+                __v: 0,
+                _id: response.body.week.tasks[4]._id,
+              },
+              {
+                title: "Umyć zęby",
+                reward: 4,
+                imageUrl:
+                  "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(5).png",
+                days: days[5],
+                __v: 0,
+                _id: response.body.week.tasks[5]._id,
+              },
+              {
+                title: "Zamieść",
+                reward: 4,
+                imageUrl:
+                  "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(6).png",
+                days: days[6],
+                __v: 0,
+                _id: response.body.week.tasks[6]._id,
+              },
+              {
+                title: "Posprzątać zabawki",
+                reward: 2,
+                imageUrl:
+                  "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(7).png",
+                days: days[7],
                 __v: 0,
                 _id: response.body.week.tasks[7]._id,
               },

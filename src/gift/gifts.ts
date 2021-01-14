@@ -4,6 +4,7 @@ export const ruGifts = [
     price: 40,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(8).png",
+    isSelected: false,
     id: 1,
   },
   {
@@ -11,6 +12,7 @@ export const ruGifts = [
     price: 90,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(9).png",
+    isSelected: false,
     id: 2,
   },
   {
@@ -18,6 +20,7 @@ export const ruGifts = [
     price: 100,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(10).png",
+    isSelected: false,
     id: 3,
   },
   {
@@ -25,6 +28,7 @@ export const ruGifts = [
     price: 90,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(11).png",
+    isSelected: false,
     id: 4,
   },
   {
@@ -32,6 +36,7 @@ export const ruGifts = [
     price: 120,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(12).png",
+    isSelected: false,
     id: 5,
   },
   {
@@ -39,6 +44,7 @@ export const ruGifts = [
     price: 80,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(13).png",
+    isSelected: false,
     id: 6,
   },
   {
@@ -46,6 +52,7 @@ export const ruGifts = [
     price: 200,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(14).png",
+    isSelected: false,
     id: 7,
   },
   {
@@ -53,6 +60,7 @@ export const ruGifts = [
     price: 100,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(15).png",
+    isSelected: false,
     id: 8,
   },
 ];
@@ -63,6 +71,7 @@ export const enGifts = [
     price: 40,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(8).png",
+    isSelected: false,
     id: 9,
   },
   {
@@ -70,6 +79,7 @@ export const enGifts = [
     price: 90,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(9).png",
+    isSelected: false,
     id: 10,
   },
   {
@@ -77,6 +87,7 @@ export const enGifts = [
     price: 100,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(10).png",
+    isSelected: false,
     id: 11,
   },
   {
@@ -84,6 +95,7 @@ export const enGifts = [
     price: 90,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(11).png",
+    isSelected: false,
     id: 12,
   },
   {
@@ -91,6 +103,7 @@ export const enGifts = [
     price: 120,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(12).png",
+    isSelected: false,
     id: 13,
   },
   {
@@ -98,6 +111,7 @@ export const enGifts = [
     price: 80,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(13).png",
+    isSelected: false,
     id: 14,
   },
   {
@@ -105,6 +119,7 @@ export const enGifts = [
     price: 200,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(14).png",
+    isSelected: false,
     id: 15,
   },
   {
@@ -112,6 +127,7 @@ export const enGifts = [
     price: 100,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(15).png",
+    isSelected: false,
     id: 16,
   },
 ];
@@ -122,6 +138,7 @@ export const plGifts = [
     price: 40,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(8).png",
+    isSelected: false,
     id: 17,
   },
   {
@@ -129,6 +146,7 @@ export const plGifts = [
     price: 90,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(9).png",
+    isSelected: false,
     id: 18,
   },
   {
@@ -136,6 +154,7 @@ export const plGifts = [
     price: 100,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(10).png",
+    isSelected: false,
     id: 19,
   },
   {
@@ -143,6 +162,7 @@ export const plGifts = [
     price: 90,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(11).png",
+    isSelected: false,
     id: 20,
   },
   {
@@ -150,6 +170,7 @@ export const plGifts = [
     price: 120,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(12).png",
+    isSelected: false,
     id: 21,
   },
   {
@@ -157,6 +178,7 @@ export const plGifts = [
     price: 80,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(13).png",
+    isSelected: false,
     id: 22,
   },
   {
@@ -164,6 +186,7 @@ export const plGifts = [
     price: 200,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(14).png",
+    isSelected: false,
     id: 23,
   },
   {
@@ -171,6 +194,7 @@ export const plGifts = [
     price: 100,
     imageUrl:
       "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(15).png",
+    isSelected: false,
     id: 24,
   },
 ];

@@ -47,7 +47,7 @@ const taskDateSchema = Joi.object({
 });
 
 const singleTaskActiveArraySchema = Joi.object({
-  days: Joi.array().min(8).max(8).items(Joi.boolean()).required(),
+  days: Joi.array().min(7).max(7).items(Joi.boolean()).required(),
 });
 
 const taskActiveArraySchema = Joi.object({

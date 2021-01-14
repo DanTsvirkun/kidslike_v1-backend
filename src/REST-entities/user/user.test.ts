@@ -5,13 +5,12 @@ import { DateTime } from "luxon";
 import {
   IWeek,
   IWeekPopulated,
-  ITask,
   IDay,
   IUser,
   IUserPopulated,
 } from "../../helpers/typescript-helpers/interfaces";
 import Server from "../../server/server";
-import UserModel from "../user/user.model";
+import UserModel from "./user.model";
 import SessionModel from "../session/session.model";
 import WeekModel from "../week/week.model";
 import TaskModel from "../task/task.model";
@@ -77,50 +76,23 @@ describe("User router test suite", () => {
 
   describe("GET /user/info", () => {
     let response: Response;
-    let days: IDay[];
+    let days: IDay[][] = [[], [], [], [], [], [], [], []];
 
     context("Valid request", () => {
       beforeAll(async () => {
         response = await supertest(app)
           .get("/user/info")
           .set("Authorization", `Bearer ${token}`);
-        days = [
-          {
-            date: startOfTheWeek.plus({ days: 0 }).toFormat("yyyy-MM-dd"),
-            isActive: false,
-            isCompleted: false,
-          },
-          {
-            date: startOfTheWeek.plus({ days: 1 }).toFormat("yyyy-MM-dd"),
-            isActive: false,
-            isCompleted: false,
-          },
-          {
-            date: startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
-            isActive: false,
-            isCompleted: false,
-          },
-          {
-            date: startOfTheWeek.plus({ days: 3 }).toFormat("yyyy-MM-dd"),
-            isActive: false,
-            isCompleted: false,
-          },
-          {
-            date: startOfTheWeek.plus({ days: 4 }).toFormat("yyyy-MM-dd"),
-            isActive: false,
-            isCompleted: false,
-          },
-          {
-            date: startOfTheWeek.plus({ days: 5 }).toFormat("yyyy-MM-dd"),
-            isActive: false,
-            isCompleted: false,
-          },
-          {
-            date: startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
-            isActive: false,
-            isCompleted: false,
-          },
-        ];
+        for (let i = 0; i < 8; i++) {
+          for (let j = 0; j < 7; j++) {
+            days[i][j] = {
+              date: startOfTheWeek.plus({ days: j }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+              _id: response.body.week.tasks[i].days[j]._id,
+            };
+          }
+        }
       });
 
       it("Should return a 200 status code", () => {
@@ -151,7 +123,7 @@ describe("User router test suite", () => {
                 reward: 3,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025.png",
-                days,
+                days: days[0],
                 __v: 0,
                 _id: response.body.week.tasks[0]._id,
               },
@@ -160,7 +132,7 @@ describe("User router test suite", () => {
                 reward: 5,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(1).png",
-                days,
+                days: days[1],
                 __v: 0,
                 _id: response.body.week.tasks[1]._id,
               },
@@ -169,7 +141,7 @@ describe("User router test suite", () => {
                 reward: 2,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(2).png",
-                days,
+                days: days[2],
                 __v: 0,
                 _id: response.body.week.tasks[2]._id,
               },
@@ -178,7 +150,7 @@ describe("User router test suite", () => {
                 reward: 4,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(3).png",
-                days,
+                days: days[3],
                 __v: 0,
                 _id: response.body.week.tasks[3]._id,
               },
@@ -187,7 +159,7 @@ describe("User router test suite", () => {
                 reward: 1,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(4).png",
-                days,
+                days: days[4],
                 __v: 0,
                 _id: response.body.week.tasks[4]._id,
               },
@@ -196,7 +168,7 @@ describe("User router test suite", () => {
                 reward: 4,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(5).png",
-                days,
+                days: days[5],
                 __v: 0,
                 _id: response.body.week.tasks[5]._id,
               },
@@ -205,7 +177,7 @@ describe("User router test suite", () => {
                 reward: 4,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(6).png",
-                days,
+                days: days[6],
                 __v: 0,
                 _id: response.body.week.tasks[6]._id,
               },
@@ -214,7 +186,7 @@ describe("User router test suite", () => {
                 reward: 2,
                 imageUrl:
                   "https://storage.googleapis.com/kidslikev2_bucket/Rectangle%2025%20(7).png",
-                days,
+                days: days[7],
                 __v: 0,
                 _id: response.body.week.tasks[7]._id,
               },
