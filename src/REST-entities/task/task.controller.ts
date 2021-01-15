@@ -113,6 +113,7 @@ export const switchTaskActiveStatus = async (
             (week as IWeek).rewardsPlanned -= task.reward;
           }
           task.days[j].isActive = tasks[i].days[j].isActive;
+          tasks[i].days[j]._id = task.days[j]._id;
         }
         await task.save();
       }

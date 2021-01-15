@@ -350,3 +350,279 @@ export const googleRedirect = async (req: Request, res: Response) => {
   );
   return res.redirect(`${existingUser.originUrl}?token=${token}`);
 };
+
+export const ruGoogleAuth = async (req: Request, res: Response) => {
+  const stringifiedParams = queryString.stringify({
+    client_id: process.env.GOOGLE_CLIENT_ID,
+    redirect_uri: `${process.env.BASE_URL}/auth/google-redirect-ru`,
+    scope: [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile",
+    ].join(" "),
+    response_type: "code",
+    access_type: "offline",
+    prompt: "consent",
+  });
+  return res.redirect(
+    `https://accounts.google.com/o/oauth2/v2/auth?${stringifiedParams}`
+  );
+};
+
+export const ruGoogleRedirect = async (req: Request, res: Response) => {
+  const fullUrl = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
+  const urlObj = new URL(fullUrl);
+  const urlParams = queryString.parse(urlObj.search);
+  const code = urlParams.code;
+  const tokenData = await axios({
+    url: `https://oauth2.googleapis.com/token`,
+    method: "post",
+    data: {
+      client_id: process.env.GOOGLE_CLIENT_ID,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET,
+      redirect_uri: `${process.env.BASE_URL}/auth/google-redirect-ru`,
+      grant_type: "authorization_code",
+      code,
+    },
+  });
+  const userData = await axios({
+    url: "https://www.googleapis.com/oauth2/v2/userinfo",
+    method: "get",
+    headers: {
+      Authorization: `Bearer ${tokenData.data.access_token}`,
+    },
+  });
+  let existingUser = await UserModel.findOne({ email: userData.data.email });
+  if (!existingUser) {
+    const week = await newWeek("ru");
+    const existingUser = await UserModel.create({
+      email: userData.data.email,
+      balance: 0,
+      currentWeek: week._id,
+    });
+    const session = await SessionModel.create({
+      uid: existingUser._id,
+    });
+    const token = jwt.sign(
+      { uid: existingUser._id, sid: session._id },
+      process.env.JWT_SECRET as string
+    );
+    return res.redirect(
+      `https://goit.global/ru/student_projects/kidslike?token=${token}`
+    );
+  }
+  const session = await SessionModel.create({
+    uid: existingUser._id,
+  });
+  const token = jwt.sign(
+    { uid: existingUser._id, sid: session._id },
+    process.env.JWT_SECRET as string
+  );
+  return res.redirect(
+    `https://goit.global/ru/student_projects/kidslike?token=${token}`
+  );
+};
+
+export const plGoogleAuth = async (req: Request, res: Response) => {
+  const stringifiedParams = queryString.stringify({
+    client_id: process.env.GOOGLE_CLIENT_ID,
+    redirect_uri: `${process.env.BASE_URL}/auth/google-redirect-pl`,
+    scope: [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile",
+    ].join(" "),
+    response_type: "code",
+    access_type: "offline",
+    prompt: "consent",
+  });
+  return res.redirect(
+    `https://accounts.google.com/o/oauth2/v2/auth?${stringifiedParams}`
+  );
+};
+
+export const plGoogleRedirect = async (req: Request, res: Response) => {
+  const fullUrl = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
+  const urlObj = new URL(fullUrl);
+  const urlParams = queryString.parse(urlObj.search);
+  const code = urlParams.code;
+  const tokenData = await axios({
+    url: `https://oauth2.googleapis.com/token`,
+    method: "post",
+    data: {
+      client_id: process.env.GOOGLE_CLIENT_ID,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET,
+      redirect_uri: `${process.env.BASE_URL}/auth/google-redirect-pl`,
+      grant_type: "authorization_code",
+      code,
+    },
+  });
+  const userData = await axios({
+    url: "https://www.googleapis.com/oauth2/v2/userinfo",
+    method: "get",
+    headers: {
+      Authorization: `Bearer ${tokenData.data.access_token}`,
+    },
+  });
+  let existingUser = await UserModel.findOne({ email: userData.data.email });
+  if (!existingUser) {
+    const week = await newWeek("pl");
+    const existingUser = await UserModel.create({
+      email: userData.data.email,
+      balance: 0,
+      currentWeek: week._id,
+    });
+    const session = await SessionModel.create({
+      uid: existingUser._id,
+    });
+    const token = jwt.sign(
+      { uid: existingUser._id, sid: session._id },
+      process.env.JWT_SECRET as string
+    );
+    return res.redirect(
+      `https://goit.global/pl/student_projects/kidslike?token=${token}`
+    );
+  }
+  const session = await SessionModel.create({
+    uid: existingUser._id,
+  });
+  const token = jwt.sign(
+    { uid: existingUser._id, sid: session._id },
+    process.env.JWT_SECRET as string
+  );
+  return res.redirect(
+    `https://goit.global/pl/student_projects/kidslike?token=${token}`
+  );
+};
+
+export const enGoogleAuth = async (req: Request, res: Response) => {
+  const stringifiedParams = queryString.stringify({
+    client_id: process.env.GOOGLE_CLIENT_ID,
+    redirect_uri: `${process.env.BASE_URL}/auth/google-redirect-en`,
+    scope: [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile",
+    ].join(" "),
+    response_type: "code",
+    access_type: "offline",
+    prompt: "consent",
+  });
+  return res.redirect(
+    `https://accounts.google.com/o/oauth2/v2/auth?${stringifiedParams}`
+  );
+};
+
+export const enGoogleRedirect = async (req: Request, res: Response) => {
+  const fullUrl = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
+  const urlObj = new URL(fullUrl);
+  const urlParams = queryString.parse(urlObj.search);
+  const code = urlParams.code;
+  const tokenData = await axios({
+    url: `https://oauth2.googleapis.com/token`,
+    method: "post",
+    data: {
+      client_id: process.env.GOOGLE_CLIENT_ID,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET,
+      redirect_uri: `${process.env.BASE_URL}/auth/google-redirect-en`,
+      grant_type: "authorization_code",
+      code,
+    },
+  });
+  const userData = await axios({
+    url: "https://www.googleapis.com/oauth2/v2/userinfo",
+    method: "get",
+    headers: {
+      Authorization: `Bearer ${tokenData.data.access_token}`,
+    },
+  });
+  let existingUser = await UserModel.findOne({ email: userData.data.email });
+  if (!existingUser) {
+    const week = await newWeek("en");
+    const existingUser = await UserModel.create({
+      email: userData.data.email,
+      balance: 0,
+      currentWeek: week._id,
+    });
+    const session = await SessionModel.create({
+      uid: existingUser._id,
+    });
+    const token = jwt.sign(
+      { uid: existingUser._id, sid: session._id },
+      process.env.JWT_SECRET as string
+    );
+    return res.redirect(`https://kidslike.goit.global?token=${token}`);
+  }
+  const session = await SessionModel.create({
+    uid: existingUser._id,
+  });
+  const token = jwt.sign(
+    { uid: existingUser._id, sid: session._id },
+    process.env.JWT_SECRET as string
+  );
+  return res.redirect(`https://kidslike.goit.global?token=${token}`);
+};
+
+export const qaGoogleAuth = async (req: Request, res: Response) => {
+  const stringifiedParams = queryString.stringify({
+    client_id: process.env.GOOGLE_CLIENT_ID,
+    redirect_uri: `${process.env.BASE_URL}/auth/google-redirect-qa`,
+    scope: [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile",
+    ].join(" "),
+    response_type: "code",
+    access_type: "offline",
+    prompt: "consent",
+  });
+  return res.redirect(
+    `https://accounts.google.com/o/oauth2/v2/auth?${stringifiedParams}`
+  );
+};
+
+export const qaGoogleRedirect = async (req: Request, res: Response) => {
+  const fullUrl = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
+  const urlObj = new URL(fullUrl);
+  const urlParams = queryString.parse(urlObj.search);
+  const code = urlParams.code;
+  const tokenData = await axios({
+    url: `https://oauth2.googleapis.com/token`,
+    method: "post",
+    data: {
+      client_id: process.env.GOOGLE_CLIENT_ID,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET,
+      redirect_uri: `${process.env.BASE_URL}/auth/google-redirect-qa`,
+      grant_type: "authorization_code",
+      code,
+    },
+  });
+  const userData = await axios({
+    url: "https://www.googleapis.com/oauth2/v2/userinfo",
+    method: "get",
+    headers: {
+      Authorization: `Bearer ${tokenData.data.access_token}`,
+    },
+  });
+  let existingUser = await UserModel.findOne({ email: userData.data.email });
+  if (!existingUser) {
+    const week = await newWeek("ru");
+    const existingUser = await UserModel.create({
+      email: userData.data.email,
+      balance: 0,
+      currentWeek: week._id,
+    });
+    const session = await SessionModel.create({
+      uid: existingUser._id,
+    });
+    const token = jwt.sign(
+      { uid: existingUser._id, sid: session._id },
+      process.env.JWT_SECRET as string
+    );
+    return res.redirect(`https://goit.global/qa/kidslike?token=${token}`);
+  }
+  const session = await SessionModel.create({
+    uid: existingUser._id,
+  });
+  const token = jwt.sign(
+    { uid: existingUser._id, sid: session._id },
+    process.env.JWT_SECRET as string
+  );
+  return res.redirect(`https://goit.global/qa/kidslike?token=${token}`);
+};

@@ -658,6 +658,331 @@ describe("Task router test suite", () => {
       ],
     };
 
+    const secondValidReqBody = {
+      tasks: [
+        {
+          taskId: "",
+          days: [
+            {
+              date: startOfTheWeek.plus({ days: 0 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 1 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 3 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 4 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 5 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+          ],
+        },
+        {
+          taskId: "",
+          days: [
+            {
+              date: startOfTheWeek.plus({ days: 0 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 1 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 3 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 4 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 5 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+          ],
+        },
+        {
+          taskId: "",
+          days: [
+            {
+              date: startOfTheWeek.plus({ days: 0 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 1 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 3 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 4 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 5 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+          ],
+        },
+        {
+          taskId: "",
+          days: [
+            {
+              date: startOfTheWeek.plus({ days: 0 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 1 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 3 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 4 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 5 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+          ],
+        },
+        {
+          taskId: "",
+          days: [
+            {
+              date: startOfTheWeek.plus({ days: 0 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 1 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 3 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 4 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 5 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+          ],
+        },
+        {
+          taskId: "",
+          days: [
+            {
+              date: startOfTheWeek.plus({ days: 0 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 1 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 3 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 4 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 5 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+          ],
+        },
+        {
+          taskId: "",
+          days: [
+            {
+              date: startOfTheWeek.plus({ days: 0 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 1 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 3 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 4 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 5 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+          ],
+        },
+        {
+          taskId: "",
+          days: [
+            {
+              date: startOfTheWeek.plus({ days: 0 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 1 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 2 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 3 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 4 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 5 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+            {
+              date: startOfTheWeek.plus({ days: 6 }).toFormat("yyyy-MM-dd"),
+              isActive: false,
+              isCompleted: false,
+            },
+          ],
+        },
+      ],
+    };
+
     const invalidReqBody = {
       tasks: [
         {
@@ -1411,7 +1736,7 @@ describe("Task router test suite", () => {
           .patch(`/task/active`)
           .set("Authorization", `Bearer ${token}`)
           .send(validReqBody);
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 9; i++) {
           for (let j = 0; j < 7; j++) {
             (validReqBody.tasks[i].days[j] as IDay)._id =
               response.body.updatedTasks[i].days[j]._id;
@@ -1554,14 +1879,18 @@ describe("Task router test suite", () => {
 
     context("With another account", () => {
       beforeAll(async () => {
-        const secondValidReqBody = validReqBody.tasks.slice(
-          0,
-          validReqBody.tasks.length - 1
-        );
+        secondValidReqBody.tasks[0].taskId = (createdWeek as IWeek).tasks[0].toString();
+        secondValidReqBody.tasks[1].taskId = (createdWeek as IWeek).tasks[1].toString();
+        secondValidReqBody.tasks[2].taskId = (createdWeek as IWeek).tasks[2].toString();
+        secondValidReqBody.tasks[3].taskId = (createdWeek as IWeek).tasks[3].toString();
+        secondValidReqBody.tasks[4].taskId = (createdWeek as IWeek).tasks[4].toString();
+        secondValidReqBody.tasks[5].taskId = (createdWeek as IWeek).tasks[5].toString();
+        secondValidReqBody.tasks[6].taskId = (createdWeek as IWeek).tasks[6].toString();
+        secondValidReqBody.tasks[7].taskId = (createdWeek as IWeek).tasks[7].toString();
         response = await supertest(app)
           .patch(`/task/active`)
           .set("Authorization", `Bearer ${secondToken}`)
-          .send({ tasks: secondValidReqBody });
+          .send(secondValidReqBody);
       });
 
       it("Should return a 404 status code", () => {

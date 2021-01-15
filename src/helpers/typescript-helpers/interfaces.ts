@@ -4,7 +4,7 @@ import { MongoDBObjectId } from "./types";
 export interface IUser extends Document {
   email: string;
   passwordHash?: string;
-  originUrl: string;
+  originUrl?: string;
   balance: number;
   currentWeek: MongoDBObjectId;
 }
@@ -12,7 +12,7 @@ export interface IUser extends Document {
 export interface IUserPopulated extends Document {
   email: string;
   passwordHash?: string;
-  originUrl: string;
+  originUrl?: string;
   balance: number;
   currentWeek: IWeekPopulated;
 }

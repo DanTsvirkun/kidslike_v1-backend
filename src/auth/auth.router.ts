@@ -8,6 +8,14 @@ import {
   login,
   googleAuth,
   googleRedirect,
+  ruGoogleAuth,
+  ruGoogleRedirect,
+  enGoogleAuth,
+  enGoogleRedirect,
+  plGoogleAuth,
+  plGoogleRedirect,
+  qaGoogleAuth,
+  qaGoogleRedirect,
   logout,
   authorize,
 } from "./auth.controller";
@@ -35,5 +43,13 @@ router.post("/login", validate(signUpInSchema), tryCatchWrapper(login));
 router.post("/logout", tryCatchWrapper(authorize), tryCatchWrapper(logout));
 router.get("/google", tryCatchWrapper(googleAuth));
 router.get("/google-redirect", tryCatchWrapper(googleRedirect));
+router.get("/google-ru", tryCatchWrapper(ruGoogleAuth));
+router.get("/google-redirect-ru", tryCatchWrapper(ruGoogleRedirect));
+router.get("/google-en", tryCatchWrapper(enGoogleAuth));
+router.get("/google-redirect-en", tryCatchWrapper(enGoogleRedirect));
+router.get("/google-pl", tryCatchWrapper(plGoogleAuth));
+router.get("/google-redirect-pl", tryCatchWrapper(plGoogleRedirect));
+router.get("/google-qa", tryCatchWrapper(qaGoogleAuth));
+router.get("/google-redirect-qa", tryCatchWrapper(qaGoogleRedirect));
 
 export default router;
