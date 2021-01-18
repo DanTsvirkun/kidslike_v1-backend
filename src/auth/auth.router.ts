@@ -40,6 +40,8 @@ router.post(
   tryCatchWrapper(registerPl)
 );
 router.post("/login", validate(signUpInSchema), tryCatchWrapper(login));
+router.post("/login-en", validate(signUpInSchema), tryCatchWrapper(login));
+router.post("/login-pl", validate(signUpInSchema), tryCatchWrapper(login));
 router.post("/logout", tryCatchWrapper(authorize), tryCatchWrapper(logout));
 router.get("/google", tryCatchWrapper(googleAuth));
 router.get("/google-redirect", tryCatchWrapper(googleRedirect));

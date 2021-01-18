@@ -258,6 +258,132 @@ export const login = async (
     });
 };
 
+export const loginEn = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { email, password } = req.body;
+  const user = await UserModel.findOne({ email });
+  if (!user) {
+    return res
+      .status(403)
+      .send({ message: `User with this email doesn't exist`, success: false });
+  }
+  if (!user.passwordHash) {
+    return res.status(403).send({ message: "Forbidden", success: false });
+  }
+  const isPasswordCorrect = await bcrypt.compare(password, user.passwordHash);
+  if (!isPasswordCorrect) {
+    return res
+      .status(403)
+      .send({ message: "Password is wrong", success: false });
+  }
+  const session = await SessionModel.create({
+    uid: user._id,
+  });
+  const token = jwt.sign(
+    { uid: user._id, sid: session._id },
+    process.env.JWT_SECRET as string
+  );
+  const currentWeek = await checkWeek(user);
+  if (!currentWeek) {
+    const week = await newWeek("en");
+    user.currentWeek = week._id;
+    await user.save();
+  }
+  return UserModel.findOne({ email })
+    .populate({
+      path: "currentWeek",
+      model: WeekModel,
+      populate: [
+        {
+          path: "tasks",
+          model: TaskModel,
+        },
+      ],
+    })
+    .exec((err: any, data: IUserPopulated) => {
+      if (err) {
+        next(err);
+      }
+      return res.status(200).send({
+        message: "Successfully authenticated",
+        success: true,
+        token,
+        user: {
+          email: data.email,
+          balance: data.balance,
+          id: data._id,
+        },
+        week: data.currentWeek,
+      });
+    });
+};
+
+export const loginPl = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { email, password } = req.body;
+  const user = await UserModel.findOne({ email });
+  if (!user) {
+    return res
+      .status(403)
+      .send({ message: `User with this email doesn't exist`, success: false });
+  }
+  if (!user.passwordHash) {
+    return res.status(403).send({ message: "Forbidden", success: false });
+  }
+  const isPasswordCorrect = await bcrypt.compare(password, user.passwordHash);
+  if (!isPasswordCorrect) {
+    return res
+      .status(403)
+      .send({ message: "Password is wrong", success: false });
+  }
+  const session = await SessionModel.create({
+    uid: user._id,
+  });
+  const token = jwt.sign(
+    { uid: user._id, sid: session._id },
+    process.env.JWT_SECRET as string
+  );
+  const currentWeek = await checkWeek(user);
+  if (!currentWeek) {
+    const week = await newWeek("pl");
+    user.currentWeek = week._id;
+    await user.save();
+  }
+  return UserModel.findOne({ email })
+    .populate({
+      path: "currentWeek",
+      model: WeekModel,
+      populate: [
+        {
+          path: "tasks",
+          model: TaskModel,
+        },
+      ],
+    })
+    .exec((err: any, data: IUserPopulated) => {
+      if (err) {
+        next(err);
+      }
+      return res.status(200).send({
+        message: "Successfully authenticated",
+        success: true,
+        token,
+        user: {
+          email: data.email,
+          balance: data.balance,
+          id: data._id,
+        },
+        week: data.currentWeek,
+      });
+    });
+};
+
 export const authorize = async (
   req: Request,
   res: Response,
