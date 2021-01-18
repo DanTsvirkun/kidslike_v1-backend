@@ -1,5 +1,10 @@
 import { DateTime } from "luxon";
-import { IDay, IUser, IWeek } from "../typescript-helpers/interfaces";
+import {
+  IUserPopulated,
+  IDay,
+  IUser,
+  IWeek,
+} from "../typescript-helpers/interfaces";
 import { MongoDBObjectId } from "../typescript-helpers/types";
 import {
   ruTasks,
@@ -50,7 +55,7 @@ export const newWeek = async (lang: "ru" | "en" | "pl") => {
   return week;
 };
 
-export const checkWeek = async (user: IUser) => {
+export const checkWeek = async (user: IUser | IUserPopulated) => {
   const startOfTheWeek = DateTime.local().startOf("week");
   const userCurrentWeek = await WeekModel.findOne({
     _id: user.currentWeek,

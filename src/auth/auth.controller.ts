@@ -13,7 +13,7 @@ import UserModel from "../REST-entities/user/user.model";
 import SessionModel from "../REST-entities/session/session.model";
 import WeekModel from "../REST-entities/week/week.model";
 import TaskModel from "../REST-entities/task/task.model";
-import { newWeek } from "../helpers/function-helpers/new-week";
+import { checkWeek, newWeek } from "../helpers/function-helpers/new-week";
 
 export const register = async (
   req: Request,
@@ -223,6 +223,12 @@ export const login = async (
     { uid: user._id, sid: session._id },
     process.env.JWT_SECRET as string
   );
+  const currentWeek = await checkWeek(user);
+  if (!currentWeek) {
+    const week = await newWeek("ru");
+    user.currentWeek = week._id;
+    await user.save();
+  }
   return UserModel.findOne({ email })
     .populate({
       path: "currentWeek",

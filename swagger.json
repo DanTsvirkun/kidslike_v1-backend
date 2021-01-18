@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "version": "2.0.0",
+    "version": "2.0.1",
     "title": "Kidslike API docs",
     "description": "API documentation for GoIT project 'Kidslike'. [Backend github repository](https://github.com/DanTsvirkun/kidslike_v1-backend)",
     "license": {
@@ -679,7 +679,7 @@
       },
       "TaskRequest": {
         "type": "object",
-        "required": ["title", "reward", "file"],
+        "required": ["title", "reward"],
         "properties": {
           "title": {
             "type": "string",

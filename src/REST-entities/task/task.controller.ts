@@ -15,17 +15,18 @@ import UserModel from "../user/user.model";
 export const createTask = async (req: Request, res: Response) => {
   const user = req.user as IUser;
   const { title, reward } = req.body;
-  if (!req.file) {
-    return res
-      .status(400)
-      .send({ message: "Please, upload an image", success: false });
-  }
   if (req.fileValidationError) {
     return res
       .status(415)
       .send({ message: req.fileValidationError, success: false });
   }
-  const imageUrl = (await uploadImage(req.file)) as string;
+  let imageUrl: string;
+  if (!req.file) {
+    imageUrl =
+      "https://storage.googleapis.com/kidslikev2_bucket/default-task.jpg";
+  } else {
+    imageUrl = (await uploadImage(req.file)) as string;
+  }
   const startOfTheWeek = DateTime.local().startOf("week");
   let days: IDay[] = [];
   for (let i = 0; i < 7; i++) {

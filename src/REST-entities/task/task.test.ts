@@ -235,24 +235,6 @@ describe("Task router test suite", () => {
       });
     });
 
-    context("Invalid request ('file' not provided)", () => {
-      beforeAll(async () => {
-        response = await supertest(app)
-          .post("/task")
-          .set("Authorization", `Bearer ${token}`)
-          .field("title", "Test")
-          .field("reward", 1);
-      });
-
-      it("Should return a 400 status code", () => {
-        expect(response.status).toBe(400);
-      });
-
-      it("Should say that image is required", () => {
-        expect(response.body.message).toBe("Please, upload an image");
-      });
-    });
-
     context("Invalid request (without providing 'token')", () => {
       beforeAll(async () => {
         response = await supertest(app)
