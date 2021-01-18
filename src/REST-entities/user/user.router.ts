@@ -6,5 +6,7 @@ import { getAllInfo } from "./user.controller";
 const router = Router();
 
 router.get("/info", tryCatchWrapper(authorize), tryCatchWrapper(getAllInfo));
+router.get("/info-en", tryCatchWrapper(authorize), tryCatchWrapper(getAllInfo));
+router.get("/info-pl", tryCatchWrapper(authorize), tryCatchWrapper(getAllInfo));
 
 export default router;
