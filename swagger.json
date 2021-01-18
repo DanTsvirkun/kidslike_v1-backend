@@ -12,8 +12,8 @@
   "consumes": ["application/json"],
   "produces": ["application/json"],
   "servers": [
-    { "url": "https://kidslike-v1-backend.goit.global" },
-    { "url": "https://kidslikev1.herokuapp.com" }
+    { "url": "https://kidslikev1.herokuapp.com" },
+    { "url": "https://kidslike-v1-backend.goit.global" }
   ],
   "tags": [
     {
