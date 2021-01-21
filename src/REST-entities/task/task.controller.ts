@@ -53,7 +53,7 @@ export const createTask = async (req: Request, res: Response) => {
     reward: Number(reward),
     imageUrl,
     id: task._id,
-    days,
+    days: task.days,
   });
 };
 

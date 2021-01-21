@@ -539,7 +539,7 @@ export const ruGoogleRedirect = async (req: Request, res: Response) => {
       process.env.JWT_SECRET as string
     );
     return res.redirect(
-      `https://goit.global/ru/student_projects/kidslike?token=${token}`
+      `https://goit.global/ru/student_projects/kidslike/auth?token=${token}`
     );
   }
   const session = await SessionModel.create({
@@ -550,7 +550,7 @@ export const ruGoogleRedirect = async (req: Request, res: Response) => {
     process.env.JWT_SECRET as string
   );
   return res.redirect(
-    `https://goit.global/ru/student_projects/kidslike?token=${token}`
+    `https://goit.global/ru/student_projects/kidslike/auth?token=${token}`
   );
 };
 
@@ -610,7 +610,7 @@ export const plGoogleRedirect = async (req: Request, res: Response) => {
       process.env.JWT_SECRET as string
     );
     return res.redirect(
-      `https://goit.global/pl/student_projects/kidslike?token=${token}`
+      `https://goit.global/pl/student_projects/kidslike/auth?token=${token}`
     );
   }
   const session = await SessionModel.create({
@@ -621,7 +621,7 @@ export const plGoogleRedirect = async (req: Request, res: Response) => {
     process.env.JWT_SECRET as string
   );
   return res.redirect(
-    `https://goit.global/pl/student_projects/kidslike?token=${token}`
+    `https://goit.global/pl/student_projects/kidslike/auth?token=${token}`
   );
 };
 
@@ -680,7 +680,7 @@ export const enGoogleRedirect = async (req: Request, res: Response) => {
       { uid: existingUser._id, sid: session._id },
       process.env.JWT_SECRET as string
     );
-    return res.redirect(`https://kidslike.goit.global?token=${token}`);
+    return res.redirect(`https://kidslike.goit.global/auth?token=${token}`);
   }
   const session = await SessionModel.create({
     uid: existingUser._id,
@@ -689,7 +689,7 @@ export const enGoogleRedirect = async (req: Request, res: Response) => {
     { uid: existingUser._id, sid: session._id },
     process.env.JWT_SECRET as string
   );
-  return res.redirect(`https://kidslike.goit.global?token=${token}`);
+  return res.redirect(`https://kidslike.goit.global/auth?token=${token}`);
 };
 
 export const qaGoogleAuth = async (req: Request, res: Response) => {
@@ -747,7 +747,7 @@ export const qaGoogleRedirect = async (req: Request, res: Response) => {
       { uid: existingUser._id, sid: session._id },
       process.env.JWT_SECRET as string
     );
-    return res.redirect(`https://goit.global/qa/kidslike?token=${token}`);
+    return res.redirect(`https://goit.global/qa/kidslike/auth?token=${token}`);
   }
   const session = await SessionModel.create({
     uid: existingUser._id,
@@ -756,5 +756,5 @@ export const qaGoogleRedirect = async (req: Request, res: Response) => {
     { uid: existingUser._id, sid: session._id },
     process.env.JWT_SECRET as string
   );
-  return res.redirect(`https://goit.global/qa/kidslike?token=${token}`);
+  return res.redirect(`https://goit.global/qa/kidslike/auth?token=${token}`);
 };
