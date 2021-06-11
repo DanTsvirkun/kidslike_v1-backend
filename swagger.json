@@ -495,21 +495,26 @@
           "data": {
             "type": "object",
             "properties": {
-              "email": {
-                "type": "string",
-                "description": "User's email",
-                "format": "email"
-              },
-              "id": {
-                "type": "string",
-                "description": "User's id",
-                "example": "507f1f77bcf86cd799439012"
-              },
-              "balance": {
-                "type": "integer",
-                "description": "User's rewards balance",
-                "example": 5,
-                "minimum": 0
+              "user": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "User's email",
+                    "format": "email"
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "User's id",
+                    "example": "507f1f77bcf86cd799439012"
+                  },
+                  "balance": {
+                    "type": "integer",
+                    "description": "User's rewards balance",
+                    "example": 5,
+                    "minimum": 0
+                  }
+                }
               },
               "week": {
                 "type": "object",
