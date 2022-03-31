@@ -13,8 +13,8 @@ import {
 import { multerMid } from "../../helpers/function-helpers/multer-config";
 
 const createTaskSchema = Joi.object({
-  title: Joi.string().required(),
-  reward: Joi.number().required().min(1),
+  title: Joi.string().min(2).max(100).required(),
+  reward: Joi.number().required().min(1).max(10000),
 });
 
 const taskIdSchema = Joi.object({

@@ -451,11 +451,15 @@
           "email": {
             "type": "string",
             "description": "User's email",
+            "minLength": 3,
+            "maxLength": 254,
             "format": "email"
           },
           "password": {
             "type": "string",
             "description": "User's password",
+            "minLength": 8,
+            "maxLength": 100,
             "example": "qwerty123"
           }
         }
@@ -467,11 +471,15 @@
           "email": {
             "type": "string",
             "description": "User's email",
+            "minLength": 3,
+            "maxLength": 254,
             "format": "email"
           },
           "password": {
             "type": "string",
             "description": "User's password",
+            "minLength": 8,
+            "maxLength": 100,
             "example": "qwerty123"
           }
         }
@@ -564,8 +572,7 @@
                         "reward": {
                           "type": "integer",
                           "description": "Task's reward",
-                          "example": 5,
-                          "minimum": 1
+                          "example": 5
                         },
                         "imageUrl": {
                           "type": "string",
@@ -656,12 +663,15 @@
           "title": {
             "type": "string",
             "description": "Task's title",
+            "minLength": 2,
+            "maxLength": 100,
             "example": "Task 1"
           },
           "reward": {
             "type": "integer",
             "description": "Task's reward",
-            "minimum": 0,
+            "minimum": 1,
+            "maximum": 10000,
             "example": 1
           },
           "file": {

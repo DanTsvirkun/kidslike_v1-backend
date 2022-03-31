@@ -420,8 +420,6 @@ export const authorize = async (
 export const logout = async (req: Request, res: Response) => {
   const currentSession = req.session;
   await SessionModel.deleteOne({ _id: (currentSession as ISession)._id });
-  req.user = null;
-  req.session = null;
   return res.status(204).end();
 };
 
